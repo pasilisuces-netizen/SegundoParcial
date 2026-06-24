@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+{% block nav_tecnologia %}active{% endblock %}
+{% load static %}
+
+{% block title %}NeuralTech — Tecnología{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'mi_app/styles.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <div class="page-hero-bg">
+        <div class="hero-grid"></div>
+    </div>
+    <div class="container">
+        <div class="page-hero-content">
+            <span class="section-tag">Bajo el capó</span>
+            <h1 class="page-hero-title">Nuestra <span class="accent">Tecnología</span></h1>
+            <p>La infraestructura de IA más avanzada, construida para escalar</p>
+        </div>
+    </div>
+</section>
+
+<!-- TECH STACK -->
+<section class="section">
+    <div class="container">
+        <div class="section-header centered">
+            <h2 class="section-title">Stack <span class="accent">Tecnológico</span></h2>
+            <p class="section-desc">Las herramientas y frameworks que impulsan nuestras soluciones</p>
+        </div>
+        <div class="tech-categories">
+
+            <div class="tech-category" data-aos="fade-up">
+                <h3 class="tech-cat-title">
+                    <span class="cat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96-.46 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/>
+                            <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96-.46 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/>
+                        </svg>
+                    </span>
+                    Machine Learning
+                </h3>
+                <div class="tech-pills">
+                    <span class="tech-pill">TensorFlow</span>
+                    <span class="tech-pill">PyTorch</span>
+                    <span class="tech-pill">Scikit-learn</span>
+                    <span class="tech-pill">Keras</span>
+                    <span class="tech-pill">XGBoost</span>
+                    <span class="tech-pill">LightGBM</span>
+                </div>
+            </div>
+
+            <div class="tech-category" data-aos="fade-up" data-delay="100">
+                <h3 class="tech-cat-title">
+                    <span class="cat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                    </span>
+                    Procesamiento de Lenguaje
+                </h3>
+                <div class="tech-pills">
+                    <span class="tech-pill">GPT-4</span>
+                    <span class="tech-pill">BERT</span>
+                    <span class="tech-pill">Hugging Face</span>
+                    <span class="tech-pill">spaCy</span>
+                    <span class="tech-pill">LangChain</span>
+                    <span class="tech-pill">NLTK</span>
+                </div>
+            </div>
+
+            <div class="tech-category" data-aos="fade-up" data-delay="200">
+                <h3 class="tech-cat-title">
+                    <span class="cat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </span>
+                    Visión por Computadora
+                </h3>
+                <div class="tech-pills">
+                    <span class="tech-pill">OpenCV</span>
+                    <span class="tech-pill">YOLO v8</span>
+                    <span class="tech-pill">Stable Diffusion</span>
+                    <span class="tech-pill">MediaPipe</span>
+                    <span class="tech-pill">Detectron2</span>
+                    <span class="tech-pill">SAM</span>
+                </div>
+            </div>
+
+            <div class="tech-category" data-aos="fade-up" data-delay="300">
+                <h3 class="tech-cat-title">
+                    <span class="cat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                    </span>
+                    Infraestructura & Cloud
+                </h3>
+                <div class="tech-pills">
+                    <span class="tech-pill">AWS SageMaker</span>
+                    <span class="tech-pill">Google Cloud AI</span>
+                    <span class="tech-pill">Kubernetes</span>
+                    <span class="tech-pill">Docker</span>
+                    <span class="tech-pill">FastAPI</span>
+                    <span class="tech-pill">MLflow</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section architecture-section">
+    <div class="container">
+        <div class="section-header centered">
+            <span class="section-tag">Arquitectura</span>
+            <h2 class="section-title">¿Cómo funciona <span class="accent">NeuralCore</span>?</h2>
+        </div>
+        <div class="arch-diagram" data-aos="fade-up">
+            <div class="arch-layer">
+                <div class="arch-node input-node">
+                    <div class="node-icon">📊</div>
+                    <span>Tus Datos</span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-node process-node">
+                    <div class="node-icon">⚡</div>
+                    <span>Ingesta & Limpieza</span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-node ai-node">
+                    <div class="node-icon">🧠</div>
+                    <span>Motor de IA</span>
+                </div>
+                <div class="arch-arrow">→</div>
+                <div class="arch-node output-node">
+                    <div class="node-icon">🎯</div>
+                    <span>Insights</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- METRICS SECTION -->
+<section class="section metrics-section">
+    <div class="container">
+        <div class="section-header centered">
+            <span class="section-tag">Resultados reales</span>
+            <h2 class="section-title">Métricas que <span class="accent">hablan</span></h2>
+        </div>
+        <div class="metrics-grid">
+            <div class="metric-card" data-aos="fade-up">
+                <div class="metric-value"><span class="counter" data-count="98">0</span>%</div>
+                <div class="metric-label">Precisión en modelos de clasificación</div>
+                <div class="metric-bar"><div class="metric-fill" style="--fill: 98%"></div></div>
+            </div>
+            <div class="metric-card" data-aos="fade-up" data-delay="100">
+                <div class="metric-value"><span class="counter" data-count="3">0</span>ms</div>
+                <div class="metric-label">Latencia promedio de inferencia</div>
+                <div class="metric-bar"><div class="metric-fill" style="--fill: 95%"></div></div>
+            </div>
+            <div class="metric-card" data-aos="fade-up" data-delay="200">
+                <div class="metric-value"><span class="counter" data-count="99">0</span>%</div>
+                <div class="metric-label">Uptime garantizado</div>
+                <div class="metric-bar"><div class="metric-fill" style="--fill: 99%"></div></div>
+            </div>
+            <div class="metric-card" data-aos="fade-up" data-delay="300">
+                <div class="metric-value"><span class="counter" data-count="10">0</span>x</div>
+                <div class="metric-label">Reducción de tiempo en análisis</div>
+                <div class="metric-bar"><div class="metric-fill" style="--fill: 85%"></div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- VISUAL GALLERY -->
+<section class="section gallery-section">
+    <div class="container">
+        <div class="section-header centered">
+            <span class="section-tag">En acción</span>
+            <h2 class="section-title">Nuestros <span class="accent">Desarrollos</span></h2>
+        </div>
+
+        <div class="gallery-grid">
+
+            <!-- ANALISIS PREDICTIVO -->
+            <div class="gallery-item tall" data-aos="fade-up">
+                <div class="gallery-content">
+                    <div class="gallery-visual">
+                        <img src="{% static 'images/analisis_predictivo.jpg' %}" alt="Analisis Predictivo">
+                        <div class="overlay"></div>
+                    </div>
+                    <div class="gallery-label">Análisis Predictivo</div>
+                </div>
+            </div>
+
+            <!-- RED NEURONAL -->
+            <div class="gallery-item" data-aos="fade-up" data-delay="100">
+                <div class="gallery-content">
+                    <div class="gallery-visual">
+                        <img src="{% static 'images/red_neuronal.jpg' %}" alt="Red Neuronal">
+                        <div class="overlay"></div>
+                    </div>
+                    <div class="gallery-label">Red Neuronal</div>
+                </div>
+            </div>
+
+            <!-- MAPA DE CALOR -->
+            <div class="gallery-item" data-aos="fade-up" data-delay="200">
+                <div class="gallery-content">
+                    <div class="gallery-visual">
+                        <img src="{% static 'images/mapa.jpg' %}" alt="Mapa de Calor">
+                        <div class="overlay"></div>
+                    </div>
+                    <div class="gallery-label">Mapa de Calor</div>
+                </div>
+            </div>
+
+            <!-- FORECASTING -->
+            <div class="gallery-item wide" data-aos="fade-up" data-delay="300">
+                <div class="gallery-content">
+                    <div class="gallery-visual">
+                        <img src="{% static 'images/modelado.jpg' %}" alt="Modelo de Forecasting">
+                        <div class="overlay"></div>
+                    </div>
+                    <div class="gallery-label">Modelo de Forecasting</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

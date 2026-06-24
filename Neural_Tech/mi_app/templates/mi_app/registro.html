@@ -1,0 +1,406 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Acceso | NeuralTech{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="page-hero auth-hero">
+    <div class="page-hero-bg">
+        <div class="hero-grid"></div>
+    </div>
+    <div class="auth-hero-particles" id="authParticles"></div>
+
+    <div class="page-hero-content">
+        <div class="hero-badge">
+            <span class="badge-dot"></span>
+            <span>Acceso Seguro · Sistema IA</span>
+        </div>
+        <h1 class="page-hero-title auth-hero-title">
+            <span id="heroTitleText">Iniciar <span class="accent">Sesión</span></span>
+        </h1>
+        <p id="heroSubtitle">
+            Accedé a la plataforma NeuralTech y gestioná tus soluciones inteligentes desde un único lugar.
+        </p>
+    </div>
+</section>
+
+
+<!-- AUTH SECTION -->
+<section class="section auth-section">
+    <div class="container">
+        <div class="auth-wrapper">
+
+            <!-- CARD -->
+            <div class="auth-card" id="authCard">
+
+                <!-- CARD HEADER -->
+                <div class="auth-card-header">
+                    <span class="form-tag">NEURAL ACCESS v2.1</span>
+                    <div class="form-status">
+                        <span class="badge-dot"></span>
+                        ONLINE
+                    </div>
+                </div>
+
+                <!-- TABS -->
+                <div class="auth-tabs" role="tablist">
+                    <button
+                        class="auth-tab active"
+                        id="tab-login"
+                        role="tab"
+                        aria-selected="true"
+                        aria-controls="panel-login"
+                        data-tab="login"
+                    >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                        Iniciar Sesión
+                    </button>
+                    <button
+                        class="auth-tab"
+                        id="tab-register"
+                        role="tab"
+                        aria-selected="false"
+                        aria-controls="panel-register"
+                        data-tab="register"
+                    >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                        Registrarse
+                    </button>
+                    <span class="tab-indicator" id="tabIndicator"></span>
+                </div>
+
+                <!-- PANELS CONTAINER -->
+                <div class="auth-panels-container" id="authPanelsContainer">
+
+                    <!-- ===== PANEL LOGIN ===== -->
+                    <div class="auth-panel active" id="panel-login" role="tabpanel" aria-labelledby="tab-login">
+
+                        <!-- Mensajes Django -->
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="nt-alert nt-alert--{{ message.tags }}">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <!-- Alerta JS login -->
+                        <div class="nt-alert nt-alert--error" id="loginAlert" style="display:none;"></div>
+                        <div class="nt-alert nt-alert--success" id="loginSuccess" style="display:none;"></div>
+
+                        <form method="POST" action="{% url 'login' %}" id="loginForm" novalidate>
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="login">
+
+                            <!-- Usuario / Email -->
+                            <div class="nt-field">
+                                <label class="nt-label" for="login_username">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    Usuario o Email
+                                    <span class="required">*</span>
+                                </label>
+                                <div class="nt-input-wrap">
+                                    <input
+                                        type="text"
+                                        id="login_username"
+                                        name="username"
+                                        class="nt-input"
+                                        placeholder="usuario o correo@ejemplo.com"
+                                        autocomplete="username"
+                                        required
+                                    >
+                                    <span class="nt-input-icon nt-input-icon--right nt-valid-icon" style="display:none;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#52d681" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                    </span>
+                                </div>
+                                <span class="nt-error-msg" id="err-login_username"></span>
+                            </div>
+
+                            <!-- Contraseña -->
+                            <div class="nt-field">
+                                <div class="nt-label-row">
+                                    <label class="nt-label" for="login_password">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                        Contraseña
+                                        <span class="required">*</span>
+                                    </label>
+                                    <a href="{}" class="nt-link-accent nt-label-link">¿Olvidaste tu contraseña?</a>
+                                </div>
+                                <div class="nt-input-wrap">
+                                    <input
+                                        type="password"
+                                        id="login_password"
+                                        name="password"
+                                        class="nt-input"
+                                        placeholder="••••••••"
+                                        autocomplete="current-password"
+                                        required
+                                    >
+                                    <button type="button" class="nt-toggle-pw" data-target="login_password" aria-label="Mostrar contraseña">
+                                        <svg class="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        <svg class="eye-off-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                                    </button>
+                                </div>
+                                <span class="nt-error-msg" id="err-login_password"></span>
+                            </div>
+
+                            <!-- Recordar sesión -->
+                            <div class="nt-check-row">
+                                <label class="nt-checkbox-label">
+                                    <input type="checkbox" name="remember" class="nt-checkbox" id="remember">
+                                    <span class="nt-checkmark"></span>
+                                    Recordar sesión
+                                </label>
+                            </div>
+
+                            <!-- Botón principal -->
+                            <button type="submit" class="btn btn-primary btn-full nt-submit-btn" id="loginSubmitBtn">
+                                <span class="btn-text">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                                    Iniciar Sesión
+                                </span>
+                                <span class="btn-loading" style="display:none;">
+                                    <span class="nt-spinner"></span>
+                                    Verificando…
+                                </span>
+                            </button>
+
+                            <!-- Divisor social -->
+                            <div class="nt-divider">
+                                <span>O continuá con</span>
+                            </div>
+
+                            <!-- Login social -->
+                            <a href="{}" class="btn btn-ghost btn-full nt-social-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                                Continuar con Google
+                            </a>
+
+                        </form>
+
+                        <p class="nt-switch-text">
+                            ¿No tenés cuenta?
+                            <button type="button" class="nt-link-accent nt-tab-switch-btn" data-switch="register">Registrarse →</button>
+                        </p>
+                    </div>
+                    <!-- /PANEL LOGIN -->
+
+
+                    <!-- ===== PANEL REGISTRO ===== -->
+                    <div class="auth-panel" id="panel-register" role="tabpanel" aria-labelledby="tab-register">
+
+                        <!-- Alertas JS registro -->
+                        <div class="nt-alert nt-alert--error" id="registerAlert" style="display:none;"></div>
+                        <div class="nt-alert nt-alert--success" id="registerSuccess" style="display:none;"></div>
+
+                        <!-- Errores Django del form de registro -->
+                        {% if register_form and register_form.errors %}
+                            <div class="nt-alert nt-alert--error">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                Revisá los campos marcados en rojo.
+                            </div>
+                        {% endif %}
+
+                        <form method="POST" action="{% url 'registro' %}" id="registerForm" novalidate>
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="register">
+
+                            <!-- Nombre y Apellido -->
+                            <div class="nt-field-row">
+                                <div class="nt-field">
+                                    <label class="nt-label" for="id_first_name">
+                                        Nombre <span class="required">*</span>
+                                    </label>
+                                    <div class="nt-input-wrap">
+                                        {% if register_form %}
+                                            {{ register_form.first_name }}
+                                        {% else %}
+                                            <input type="text" id="id_first_name" name="first_name" class="nt-input" placeholder="Juan" required>
+                                        {% endif %}
+                                    </div>
+                                    {% if register_form %}
+                                        {% for error in register_form.first_name.errors %}
+                                            <span class="nt-error-msg">{{ error }}</span>
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="nt-error-msg" id="err-first_name"></span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="nt-field">
+                                    <label class="nt-label" for="id_last_name">
+                                        Apellido <span class="required">*</span>
+                                    </label>
+                                    <div class="nt-input-wrap">
+                                        {% if register_form %}
+                                            {{ register_form.last_name }}
+                                        {% else %}
+                                            <input type="text" id="id_last_name" name="last_name" class="nt-input" placeholder="García" required>
+                                        {% endif %}
+                                    </div>
+                                    {% if register_form %}
+                                        {% for error in register_form.last_name.errors %}
+                                            <span class="nt-error-msg">{{ error }}</span>
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="nt-error-msg" id="err-last_name"></span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="nt-field">
+                                <label class="nt-label" for="id_email">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                    Email <span class="required">*</span>
+                                </label>
+                                <div class="nt-input-wrap">
+                                    {% if register_form %}
+                                        {{ register_form.email }}
+                                    {% else %}
+                                        <input type="email" id="id_email" name="email" class="nt-input" placeholder="correo@ejemplo.com" required>
+                                    {% endif %}
+                                </div>
+                                {% if register_form %}
+                                    {% for error in register_form.email.errors %}
+                                        <span class="nt-error-msg">{{ error }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="nt-error-msg" id="err-email"></span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Usuario -->
+                            <div class="nt-field">
+                                <label class="nt-label" for="id_username">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    Usuario <span class="required">*</span>
+                                </label>
+                                <div class="nt-input-wrap">
+                                    {% if register_form %}
+                                        {{ register_form.username }}
+                                    {% else %}
+                                        <input type="text" id="id_username" name="username" class="nt-input" placeholder="mi_usuario_neural" required>
+                                    {% endif %}
+                                </div>
+                                {% if register_form %}
+                                    {% for error in register_form.username.errors %}
+                                        <span class="nt-error-msg">{{ error }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="nt-error-msg" id="err-reg-username"></span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Contraseña -->
+                            <div class="nt-field">
+                                <label class="nt-label" for="id_password1">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                    Contraseña <span class="required">*</span>
+                                </label>
+                                <div class="nt-input-wrap">
+                                    {% if register_form %}
+                                        {{ register_form.password1 }}
+                                    {% else %}
+                                        <input type="password" id="id_password1" name="password1" class="nt-input" placeholder="Mínimo 8 caracteres" required>
+                                    {% endif %}
+                                    <button type="button" class="nt-toggle-pw" data-target="id_password1" aria-label="Mostrar contraseña">
+                                        <svg class="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        <svg class="eye-off-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                                    </button>
+                                </div>
+
+                                <!-- Barra de fortaleza -->
+                                <div class="nt-strength-bar" id="strengthBarWrap" style="display:none;">
+                                    <div class="nt-strength-track">
+                                        <div class="nt-strength-fill" id="strengthFill"></div>
+                                    </div>
+                                    <span class="nt-strength-label" id="strengthLabel">Sin contraseña</span>
+                                </div>
+
+                                {% if register_form %}
+                                    {% for error in register_form.password1.errors %}
+                                        <span class="nt-error-msg">{{ error }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="nt-error-msg" id="err-password1"></span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Confirmar contraseña -->
+                            <div class="nt-field">
+                                <label class="nt-label" for="id_password2">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                    Confirmar Contraseña <span class="required">*</span>
+                                </label>
+                                <div class="nt-input-wrap">
+                                    {% if register_form %}
+                                        {{ register_form.password2 }}
+                                    {% else %}
+                                        <input type="password" id="id_password2" name="password2" class="nt-input" placeholder="Repetí la contraseña" required>
+                                    {% endif %}
+                                    <button type="button" class="nt-toggle-pw" data-target="id_password2" aria-label="Mostrar contraseña">
+                                        <svg class="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        <svg class="eye-off-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                                    </button>
+                                </div>
+                                {% if register_form %}
+                                    {% for error in register_form.password2.errors %}
+                                        <span class="nt-error-msg">{{ error }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="nt-error-msg" id="err-password2"></span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Términos -->
+                            <div class="nt-field">
+                                <label class="nt-checkbox-label">
+                                    <input type="checkbox" name="terms" id="termsCheck" class="nt-checkbox" required>
+                                    <span class="nt-checkmark"></span>
+                                    Acepto <a href="#" class="nt-link-accent">Términos y Condiciones</a> y <a href="#" class="nt-link-accent">Política de Privacidad</a>
+                                </label>
+                                <span class="nt-error-msg" id="err-terms"></span>
+                            </div>
+
+                            <!-- Botón crear cuenta -->
+                            <button type="submit" class="btn btn-primary btn-full nt-submit-btn" id="registerSubmitBtn">
+                                <span class="btn-text">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                                    Crear Cuenta
+                                </span>
+                                <span class="btn-loading" style="display:none;">
+                                    <span class="nt-spinner"></span>
+                                    Creando cuenta…
+                                </span>
+                            </button>
+
+                        </form>
+
+                        <p class="nt-switch-text">
+                            ¿Ya tenés cuenta?
+                            <button type="button" class="nt-link-accent nt-tab-switch-btn" data-switch="login">Iniciar Sesión →</button>
+                        </p>
+                    </div>
+                    <!-- /PANEL REGISTRO -->
+
+                </div>
+                <!-- /PANELS CONTAINER -->
+
+                <!-- Decoración de esquinas -->
+                <span class="card-corner card-corner--tl"></span>
+                <span class="card-corner card-corner--tr"></span>
+                <span class="card-corner card-corner--bl"></span>
+                <span class="card-corner card-corner--br"></span>
+
+            </div>
+            <!-- /CARD -->
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

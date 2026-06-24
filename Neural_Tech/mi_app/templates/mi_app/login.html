@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Login | NeuralTech{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="page-hero">
+    <div class="page-hero-bg">
+        <div class="hero-grid"></div>
+    </div>
+
+    <div class="page-hero-content">
+
+        <div class="hero-badge">
+            <span class="badge-dot"></span>
+            <span>Acceso Seguro · Sistema IA</span>
+        </div>
+
+        <h1 class="page-hero-title">
+            Iniciar <span class="accent">Sesión</span>
+        </h1>
+
+        <p>
+            Accedé a la plataforma NeuralTech y gestioná tus soluciones
+            inteligentes desde un único lugar.
+        </p>
+
+    </div>
+</section>
+
+
+<section class="section">
+    <div class="container">
+
+        <div style="max-width:600px; margin:auto;">
+
+            <div class="form-card">
+
+                <div class="form-card-header">
+
+                    <span class="form-tag">
+                        AUTH SYSTEM
+                    </span>
+
+                    <div class="form-status">
+                        <span class="badge-dot"></span>
+                        ONLINE
+                    </div>
+
+                </div>
+
+                <form method="POST" class="contact-form">
+
+                    {% csrf_token %}
+
+                    {% if messages %}
+                        <div class="form-messages">
+                            {% for message in messages %}
+                                <div class="alert alert-error">
+                                    {{message}}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="form-group">
+
+                        <label class="form-label">
+                            Usuario
+                            <span class="required">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            name="username"
+                            class="form-input"
+                            placeholder="Ingresá tu usuario"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label class="form-label">
+                            Contraseña
+                            <span class="required">*</span>
+                        </label>
+
+                        <input
+                            type="password"
+                            name="password"
+                            class="form-input"
+                            placeholder="••••••••"
+                            required
+                        >
+
+                    </div>
+
+
+                    <button type="submit"
+                    class="btn btn-primary btn-full">
+
+                        Iniciar Sesión
+
+                    </button>
+
+
+                    <div style="text-align:center;margin-top:1rem;">
+
+                        <span style="color:var(--text-dim)">
+                            ¿No tenés cuenta?
+                        </span>
+
+                        <a href="{% url 'registro' %}"
+                        class="link-accent">
+
+                            Registrarse
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

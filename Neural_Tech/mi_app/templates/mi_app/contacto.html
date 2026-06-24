@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}NeuralTech — Contacto{% endblock %}
+{% block nav_contacto %}active{% endblock %}
+
+{% block extra_css %}
+{# Estilos específicos para los campos Django y el mensaje de éxito #}
+<link rel="stylesheet" href="{% static 'mi_app/styles.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!--  HERO -->
+<section class="page-hero">
+    <div class="page-hero-bg">
+        <div class="hero-grid"></div>
+    </div>
+    <div class="container">
+        <div class="page-hero-content">
+            <span class="section-tag">Hablemos</span>
+            <h1 class="page-hero-title">Ponete en <span class="accent">Contacto</span></h1>
+            <p>Estamos listos para transformar tu empresa con inteligencia artificial</p>
+        </div>
+    </div>
+</section>
+
+<!-- Sección Contacto -->
+<section class="section contact-section">
+    <div class="container">
+        <div class="contact-grid">
+
+            <!-- Información de contacto -->
+            <div class="contact-info" data-aos="fade-right">
+                <h2 class="section-title">¿Cómo podemos <span class="accent">ayudarte</span>?</h2>
+                <p>Ya sea que necesites una demo, tengas preguntas técnicas o quieras iniciar un proyecto, nuestro equipo está aquí para ayudarte.</p>
+
+                <div class="info-items">
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="info-label">Email</span>
+                            <span class="info-value">hola@neuraltech.ai</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="info-label">Teléfono</span>
+                            <span class="info-value">+54 11 5555-0000</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="info-label">Oficina</span>
+                            <span class="info-value">Buenos Aires, Argentina</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="info-label">Horario</span>
+                            <span class="info-value">Lun - Vie: 9:00 - 18:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="social-links">
+                    <span class="social-label">Seguinos</span>
+                    <div class="socials">
+                        <a href="#" class="social-btn" aria-label="LinkedIn">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+                        </a>
+                        <a href="#" class="social-btn" aria-label="Twitter/X">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </a>
+                        <a href="#" class="social-btn" aria-label="GitHub">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario de contacto -->
+            <div class="contact-form-wrap" data-aos="fade-left">
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <span class="form-tag">Formulario de Contacto</span>
+                        <div class="form-status">
+                            <span class="badge-dot"></span> Disponible ahora
+                        </div>
+                    </div>
+
+                    {# Mensajes del sistema Django (framework messages) #}
+                    {% if messages %}
+                    <div class="form-messages">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    {# Mensaje de éxito cuando se envía sin JS (fallback) #}
+                    {% if mensaje_exito %}
+                    <div class="success-message">
+                        <div class="success-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M20 6L9 17l-5-5"/>
+                            </svg>
+                        </div>
+                        <div class="success-content">
+                            <h4>¡Mensaje enviado con éxito!</h4>
+                            <p>{{ mensaje_exito }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {# El id="contactForm" es capturado por contacto_ajax.js #}
+                    <form method="POST"
+                          action="{% url 'contacto' %}"
+                          class="contact-form"
+                          id="contactForm"
+                          novalidate>
+
+                        {% csrf_token %}
+
+                        {# Django renderiza los campos automáticamente #}
+                        {# El CSS de contacto_django_forms.css los estiliza #}
+                       <div class="form-group">
+                        {{ form.nombre.label_tag }}
+                        {{ form.nombre }}
+                        <span class="form-error" id="error-nombre"></span>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.apellido.label_tag }}
+                        {{ form.apellido }}
+                        <span class="form-error" id="error-apellido"></span>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                        <span class="form-error" id="error-email"></span>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.empresa.label_tag }}
+                        {{ form.empresa }}
+                        <span class="form-error" id="error-empresa"></span>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.servicio.label_tag }}
+                        {{ form.servicio }}
+                        <span class="form-error" id="error-servicio"></span>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.mensaje.label_tag }}
+                        {{ form.mensaje }}
+                        <span class="form-error" id="error-mensaje"></span>
+                    </div>
+
+                        {# Checkbox de política de privacidad (campo manual) #}
+                        <div class="form-group form-check">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="acepta" name="acepta" required>
+                                <span class="checkbox-custom"></span>
+                                Acepto la <a href="#" class="link-accent">política de privacidad</a>
+                                y el tratamiento de mis datos <span class="required">*</span>
+                            </label>
+                            {# El JS escribe aquí el error del checkbox #}
+                            <span class="form-error" id="error-acepta"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
+                            <span class="btn-text">Enviar Mensaje</span>
+                            {# El JS activa este span como spinner mientras envía #}
+                            <span class="btn-loading" style="display:none;">Enviando...</span>
+                            <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Mapa / Ubicación -->
+<section class="section location-section">
+    <div class="container">
+        <div class="location-box" data-aos="fade-up">
+            <div class="location-info">
+                <h3>Nos encontrás en <span class="accent">Buenos Aires</span></h3>
+                <p>Hub de innovación tecnológica en el corazón de la ciudad.</p>
+            </div>
+            <div class="location-map">
+                <div class="map-image">
+                    <img src="{% static 'images/hubicacion.jpg' %}" alt="Mapa de Buenos Aires" />
+                    <div class="map-label">Buenos Aires, Argentina</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+{# Script de integración dinámica Fetch API — Unidad 3, Punto 2 #}
+<script src="{% static 'mi_app/scripts.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard | NeuralTech{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'mi_app/styles.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="page-hero">
+    <div class="page-hero-bg">
+        <div class="hero-grid"></div>
+    </div>
+    <div class="container">
+        <div class="page-hero-content">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                <span>Usuario autenticado · Sistema activo</span>
+            </div>
+            <h1 class="page-hero-title">
+                Panel de <span class="accent">Administración</span>
+            </h1>
+            <p>Gestión de solicitudes recibidas del sitio web.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+
+        <!-- ENCABEZADO DEL DASHBOARD -->
+        <div class="dash-header">
+            <div>
+                <h2 class="dash-title">
+                    Bienvenido/a, <span class="accent">{{ user.get_full_name|default:user.username }}</span>
+                </h2>
+                <p class="dash-subtitle">Centro de control de solicitudes — NeuralTech</p>
+            </div>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="dash-logout-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
+
+        <!-- MENSAJES DEL SISTEMA -->
+        {% if messages %}
+            {% for message in messages %}
+            <div class="dash-alert dash-alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- RESUMEN ESTADÍSTICO -->
+        <div class="dash-stats-section">
+            <h3 class="dash-section-label">📊 Resumen Estadístico</h3>
+            <div class="dash-stats-grid">
+
+                <!-- Total -->
+                <div class="dash-stat-card dash-stat-total">
+                    <div class="dash-stat-number">{{ total }}</div>
+                    <div class="dash-stat-label">Total de solicitudes recibidas</div>
+                </div>
+
+                <!-- Por categoría -->
+                {% for item in por_categoria %}
+                <div class="dash-stat-card">
+                    <div class="dash-stat-number">{{ item.cantidad }}</div>
+                    <div class="dash-stat-label">{{ item.categoria }}</div>
+                </div>
+                {% empty %}
+                <div class="dash-stat-card">
+                    <div class="dash-stat-number">0</div>
+                    <div class="dash-stat-label">Sin datos aún</div>
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+
+        <!-- TABLA DE SOLICITUDES -->
+        <div class="dash-table-section">
+            <h3 class="dash-section-label">📋 Solicitudes recibidas</h3>
+
+            {% if consultas %}
+            <div class="dash-table-wrap">
+                <table class="dash-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nombre y Apellido</th>
+                            <th>Email</th>
+                            <th>Empresa</th>
+                            <th>Servicio</th>
+                            <th>Categoría</th>
+                            <th>Fecha</th>
+                            <th>Mensaje</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in consultas %}
+                        <tr>
+                            <td class="dash-td-id">{{ c.id }}</td>
+                            <td class="dash-td-nombre">{{ c.nombre }} {{ c.apellido }}</td>
+                            <td class="dash-td-email">{{ c.email }}</td>
+                            <td>{{ c.empresa|default:"—" }}</td>
+                            <td>{{ c.servicio }}</td>
+                            <td>
+                                <span class="dash-categoria dash-cat-{{ c.categoria|slugify }}">
+                                    {{ c.categoria }}
+                                </span>
+                            </td>
+                            <td class="dash-td-fecha">{{ c.fecha_envio|date:"d/m/Y H:i" }}</td>
+                            <td class="dash-td-mensaje">
+                                <span class="dash-mensaje-preview" title="{{ c.mensaje }}">
+                                    {{ c.mensaje|truncatechars:60 }}
+                                </span>
+                            </td>
+                            <td>
+                                <form method="post"
+                                      action="{% url 'eliminar_consulta' c.pk %}"
+                                      onsubmit="return confirm('¿Eliminás esta consulta de {{ c.nombre }}?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dash-btn-eliminar">
+                                        Eliminar
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% else %}
+            <div class="dash-empty">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                <p>No hay solicitudes recibidas aún.</p>
+                <span>Las consultas enviadas desde el formulario aparecerán aquí.</span>
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

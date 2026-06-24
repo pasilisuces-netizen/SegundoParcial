@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: Neural_Tech
+    env: python
+    buildCommand: |
+      pip install -r requirements.txt &&
+      python manage.py migrate &&
+      python manage.py collectstatic --noinput
+    startCommand: "gunicorn Neural_Tech.wsgi:application"
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: Neural_Tech.settings
+      - key: DATABASE_URL
+        value: postgresql://proyectodjango_35u6_user:GCd9Bi2Xo521twmgYowlGJ8tSBNTFlXK@dpg-d8rc0mj7uimc73f0n1ag-a.oregon-postgres.render.com/proyectodjango_35u6

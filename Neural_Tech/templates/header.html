@@ -1,0 +1,26 @@
+{% load static %}
+<header>
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="{% url 'inicio' %}" class="nav-logo">
+                <span class="logo-bracket">[</span>
+                NEURAL<span class="logo-accent">TECH</span>
+                <span class="logo-bracket">]</span>
+            </a>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="{% url 'inicio' %}"     class="nav-link {% block nav_inicio %}{% endblock %}">Inicio</a></li>
+                <li><a href="{% url 'servicios' %}"  class="nav-link {% block nav_servicios %}{% endblock %}">Productos</a></li>
+                <li><a href="{% url 'tecnologia' %}" class="nav-link {% block nav_tecnologia %}{% endblock %}">Tecnología</a></li>
+                <li><a href="{% url 'contacto' %}"   class="nav-link {% block nav_contacto %}{% endblock %}">Contacto</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'dashboard' %}"  class="nav-link {% block nav_dashboard %}{% endblock %}">Dashboard</a></li>
+                {% else %}
+                <li><a href="{% url 'registro' %}"   class="nav-link {% block nav_registro %}{% endblock %}">Identificate</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+</header>

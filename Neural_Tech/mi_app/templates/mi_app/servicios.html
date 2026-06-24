@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}NeuralTech — Productos & Servicios{% endblock %}
+{% block nav_servicios %}active{% endblock %}
+
+{% block content %}
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+    <div class="page-hero-bg">
+        <div class="hero-grid"></div>
+    </div>
+    <div class="container">
+        <div class="page-hero-content">
+            <span class="section-tag">Lo que ofrecemos</span>
+            <h1 class="page-hero-title">Productos & <span class="accent">Servicios</span></h1>
+            <p>Soluciones de inteligencia artificial diseñadas para transformar tu negocio</p>
+        </div>
+    </div>
+</section>
+
+<!-- PRODUCTS GRID -->
+<section class="section">
+    <div class="container">
+        <div class="section-header centered">
+            <h2 class="section-title">Nuestros <span class="accent">Productos</span></h2>
+            <p class="section-desc">Plataformas de IA listas para integrar en tu ecosistema empresarial</p>
+        </div>
+
+        <div class="products-grid">
+            <!-- Product 1 -->
+            <div class="product-card featured" data-aos="fade-up">
+                <div class="product-badge">Más popular</div>
+                <div class="product-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+                    </svg>
+                </div>
+                <h3 class="product-name">NeuralCore <span class="accent">Pro</span></h3>
+                <p class="product-desc">Plataforma central de procesamiento de IA. Conecta todos tus datos y obtén insights accionables en tiempo real con nuestros modelos de última generación.</p>
+                <ul class="product-features">
+                    <li><span class="check">✓</span> Procesamiento de lenguaje natural</li>
+                    <li><span class="check">✓</span> Análisis de sentimientos</li>
+                    <li><span class="check">✓</span> API REST completa</li>
+                    <li><span class="check">✓</span> Dashboard interactivo</li>
+                </ul>
+                <a href="{% url 'contacto' %}" class="btn btn-primary btn-sm">Solicitar Demo</a>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="product-card" data-aos="fade-up" data-delay="100">
+                <div class="product-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </div>
+                <h3 class="product-name">VisionAI <span class="accent">Suite</span></h3>
+                <p class="product-desc">Sistema de visión por computadora para análisis de imágenes y video. Detecta objetos, anomalías y patrones con precisión superior al 98%.</p>
+                <ul class="product-features">
+                    <li><span class="check">✓</span> Detección de objetos en tiempo real</li>
+                    <li><span class="check">✓</span> Reconocimiento facial</li>
+                    <li><span class="check">✓</span> Control de calidad industrial</li>
+                    <li><span class="check">✓</span> Análisis de video surveillance</li>
+                </ul>
+                <a href="{% url 'contacto' %}" class="btn btn-ghost btn-sm">Solicitar Demo</a>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="product-card" data-aos="fade-up" data-delay="200">
+                <div class="product-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </div>
+                <h3 class="product-name">ChatBot <span class="accent">Neural</span></h3>
+                <p class="product-desc">Asistentes conversacionales inteligentes entrenados con los datos de tu empresa. Atención al cliente 24/7 con comprensión contextual avanzada.</p>
+                <ul class="product-features">
+                    <li><span class="check">✓</span> Multiidioma (15+ idiomas)</span></li>
+                    <li><span class="check">✓</span> Integración con CRM</li>
+                    <li><span class="check">✓</span> Aprendizaje continuo</li>
+                    <li><span class="check">✓</span> Escalada inteligente a humanos</li>
+                </ul>
+                <a href="{% url 'contacto' %}" class="btn btn-ghost btn-sm">Solicitar Demo</a>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="product-card" data-aos="fade-up" data-delay="300">
+                <div class="product-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                </div>
+                <h3 class="product-name">PredictEngine <span class="accent">X</span></h3>
+                <p class="product-desc">Motor de análisis predictivo para forecast de ventas, detección de fraude y optimización de inventarios. Basado en modelos de series temporales avanzados.</p>
+                <ul class="product-features">
+                    <li><span class="check">✓</span> Predicción de demanda</li>
+                    <li><span class="check">✓</span> Detección de anomalías</li>
+                    <li><span class="check">✓</span> Modelos personalizables</li>
+                    <li><span class="check">✓</span> Reportes automatizados</li>
+                </ul>
+                <a href="{% url 'contacto' %}" class="btn btn-ghost btn-sm">Solicitar Demo</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SERVICES SECTION -->
+<section class="section services-section">
+    <div class="container">
+        <div class="section-header centered">
+            <span class="section-tag">Servicios</span>
+            <h2 class="section-title">¿Cómo <span class="accent">trabajamos</span>?</h2>
+        </div>
+        <div class="services-steps">
+            <div class="step" data-aos="fade-up">
+                <div class="step-number">01</div>
+                <div class="step-content">
+                    <h3>Diagnóstico</h3>
+                    <p>Analizamos tu negocio, identificamos oportunidades de mejora con IA y definimos el alcance del proyecto.</p>
+                </div>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step" data-aos="fade-up" data-delay="100">
+                <div class="step-number">02</div>
+                <div class="step-content">
+                    <h3>Diseño</h3>
+                    <p>Diseñamos la arquitectura de la solución, seleccionamos los modelos adecuados y planificamos la integración.</p>
+                </div>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step" data-aos="fade-up" data-delay="200">
+                <div class="step-number">03</div>
+                <div class="step-content">
+                    <h3>Desarrollo</h3>
+                    <p>Entrenamos y ajustamos los modelos con tus datos, garantizando precisión y rendimiento óptimo.</p>
+                </div>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step" data-aos="fade-up" data-delay="300">
+                <div class="step-number">04</div>
+                <div class="step-content">
+                    <h3>Despliegue</h3>
+                    <p>Implementamos en producción con monitoreo continuo, soporte dedicado y mejoras iterativas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA SECTION -->
+<section class="cta-section section">
+    <div class="container">
+        <div class="cta-box" data-aos="fade-up">
+            <div class="cta-glow"></div>
+            <span class="section-tag">¿Listo para empezar?</span>
+            <h2>Llevemos tu empresa al <span class="accent">siguiente nivel</span></h2>
+            <p>Agendá una demo gratuita y descubrí cómo NeuralTech puede transformar tu negocio.</p>
+            <a href="{% url 'contacto' %}" class="btn btn-primary btn-lg">Agendar Demo Gratuita</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
