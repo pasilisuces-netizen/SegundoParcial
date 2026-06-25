@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-)0%%7w!zcn42hvn)4&sx0$-zjh4w%r(4qdbkvig36jh_k)hy(l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://segundoparcial-5ptl.onrender.com']
+ALLOWED_HOSTS = ['segundoparcial-5ptl.onrender.com']
 
 
 # Application definition
