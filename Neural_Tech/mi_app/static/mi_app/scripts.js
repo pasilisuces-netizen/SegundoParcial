@@ -1,7 +1,6 @@
-
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ---- CURSOR GLOW ----
+    // ---- CURSOR GLOW ( // efecto visual que hace que un glow siga al cursor) ----
     const cursorGlow = document.getElementById('cursorGlow');
     if (cursorGlow) {
         document.addEventListener('mousemove', (e) => {
@@ -10,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ---- NAVBAR: scroll effect ----
+    // ---- NAVBAR: scroll effect (cambia estilo del navbar cuando haces scroll)----
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
@@ -62,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, observerOptions);
 
-    // Observe all [data-aos] elements + specific card types
+    //animaciones de los elementos
     const animatedEls = document.querySelectorAll(
         '[data-aos], .feature-card, .product-card, .tech-category, .metric-card, .step'
     );
@@ -125,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
 
-        // Real-time validation
+        //validaciones del formulario
         contactForm.querySelectorAll('.form-input').forEach(input => {
             input.addEventListener('blur', () => validateField(input));
             input.addEventListener('input', () => {
@@ -142,10 +141,10 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (field.type === 'email' && field.value) {
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(field.value)) {
-                    error = 'Ingresá un email válido.';
+                    error = 'Ingresá un email valido.';
                 }
             } else if (field.tagName === 'SELECT' && field.required && !field.value) {
-                error = 'Seleccioná una opción.';
+                error = 'Seleccioná una opcion.';
             } else if (field.tagName === 'TEXTAREA' && field.required && field.value.trim().length < 10) {
                 error = 'El mensaje debe tener al menos 10 caracteres.';
             }
@@ -161,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return !error;
         }
 
-        // Checkbox validation
+        // Cvalidacion
         function validateCheckbox() {
             const checkbox = document.getElementById('acepta');
             const errorEl = document.getElementById('error-acepta');
@@ -173,33 +172,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
         }
 
-        contactForm.addEventListener('submit', (e) => {
-            let valid = true;
+  contactForm.addEventListener('submit', async (e) => {
 
-            contactForm.querySelectorAll('.form-input').forEach(input => {
-                if (!validateField(input)) valid = false;
-            });
-            if (!validateCheckbox()) valid = false;
-
-            if (!valid) {
-                e.preventDefault();
-                // Scroll to first error
-                const firstError = contactForm.querySelector('.error');
-                if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            } else {
-                // Animate submit button
-                const btn = document.getElementById('submitBtn');
-                const btnText = btn.querySelector('.btn-text');
-                const btnLoading = btn.querySelector('.btn-loading');
-                if (btnText && btnLoading) {
-                    btnText.style.display = 'none';
-                    btnLoading.style.display = 'inline';
-                    btn.disabled = true;
-                }
-            }
-        });
-    contactForm.addEventListener('submit', async (e) => {
-    e.preventDefault(); // evita recargar
+    e.preventDefault();
 
     let valid = true;
 
@@ -215,43 +190,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!valid) return;
 
-    // botón cargando
-    const btn = document.getElementById('submitBtn');
-    const btnText = btn.querySelector('.btn-text');
-    const btnLoading = btn.querySelector('.btn-loading');
+    const btn = document.getElementById("submitBtn");
+    btn.disabled = true;
 
-    btnText.style.display='none';
-    btnLoading.style.display='inline';
-    btn.disabled=true;
+    const formData = new FormData(contactForm);
 
     try {
 
-        const formData = new FormData(contactForm);
+        console.log("Enviando formulario...");
 
-        const response = await fetch(contactForm.action,{
-            method:'POST',
-            body:formData,
-            headers:{
-                'X-Requested-With':'XMLHttpRequest'
+        const response = await fetch(
+            contactForm.action,
+            {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-Requested-With":"XMLHttpRequest"
+                }
             }
-        });
+        );
 
-        const data=await response.json();
+        console.log("Status:",response.status);
 
-        const contenedor=document.querySelector('.form-messages');
+        const text = await response.text();
+
+        console.log("Respuesta cruda:");
+        console.log(text);
+
+        const data = JSON.parse(text);
+
+        let old=document.querySelector(".success-message");
+
+        if(old){
+            old.remove();
+        }
+
+        const div=document.createElement("div");
+
+        div.className="success-message";
 
         if(data.success){
 
-            contenedor.innerHTML=`
-            <div class="success-message">
-                <div class="success-icon">
-                    ✓
-                </div>
+            div.innerHTML=`
+            <div class="success-icon">✓</div>
 
-                <div class="success-content">
-                    <h4>Mensaje enviado</h4>
-                    <p>${data.message}</p>
-                </div>
+            <div class="success-content">
+                <h4>Mensaje enviado</h4>
+                <p>${data.message}</p>
             </div>
             `;
 
@@ -259,32 +244,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
         }else{
 
-            contenedor.innerHTML=`
-            <div class="alert alert-danger">
-                ${data.message}
+            div.innerHTML=`
+            <div class="error-content">
+                <h4>Error</h4>
+                <p>${data.message}</p>
             </div>
             `;
         }
 
-    } catch(error){
+        contactForm.parentNode.insertBefore(
+            div,
+            contactForm
+        );
 
+    }
+
+    catch(error){
+
+        console.log("ERROR:");
         console.log(error);
 
-        document.querySelector('.form-messages').innerHTML=`
-        <div class="alert alert-danger">
-            Error al enviar el formulario
-        </div>
-        `;
     }
 
-    btnText.style.display='inline';
-    btnLoading.style.display='none';
     btn.disabled=false;
+
 });
 
-    }
-
-    // ---- GLITCH EFFECT on hero title (subtle) ----
+    // ---- GLITCH EFFECT en el subtitulo----
     const heroTitle = document.querySelector('.hero-title');
     if (heroTitle) {
         let glitchTimeout;
@@ -295,7 +281,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     heroTitle.classList.remove('glitch');
                     scheduleGlitch();
                 }, 200);
-            }, Math.random() * 8000 + 4000);
+            }, Math.random() * 3000 + 1000);
         }
         scheduleGlitch();
     }
@@ -313,7 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ---- TYPING EFFECT on hero subtitle (optional, subtle) ----
+    // ---- TYPING EFFECT en subtitutlo ) ----
     const heroSubtitle = document.querySelector('.hero-subtitle');
     if (heroSubtitle) {
         const text = heroSubtitle.textContent;
@@ -330,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     }
 
-    // ---- PARTICLES on hero (simple dots) ----
+    // ---- PARTICLES en HEro  ----
     const particlesContainer = document.getElementById('particles');
     if (particlesContainer) {
         for (let i = 0; i < 30; i++) {
@@ -374,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.head.appendChild(style);
         }
     }
-
+ }
     // ---- SMOOTH ACTIVE LINK on scroll (single page sections if any) ----
     // Marks current nav link based on URL
     const currentPath = window.location.pathname;
@@ -387,6 +373,541 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log('%c[NEURALTECH] Systems online.', 'color: #00ADB5; font-family: monospace; font-size: 12px;');
 });
+
+document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('mouseenter', () => {
+        link.style.textShadow = '0 0 10px #00ADB5';
+    });
+    link.addEventListener('mouseleave', () => {
+        link.style.textShadow = '';
+    });
+});
+
+
+const navLinksAll = document.querySelectorAll('.nav-link');
+
+navLinksAll.forEach(link => {
+    link.addEventListener('mouseenter', () => {
+        link.style.transform = 'translateY(-2px)';
+    });
+    link.addEventListener('mouseleave', () => {
+        link.style.transform = '';
+    });
+});
+
+
+
+// ________CONTRASEÑA Y REGISTRO DE USUARIOS__________________________________________
+/**
+ * NeuralTech — auth.js
+ * SPA Tab system + Validación + Password strength + Toggle show/hide
+ *
+ * Cómo usarlo: <script src="{% static 'js/auth.js' %}" defer></script>
+ * al final del base.html o dentro del bloque scripts de auth.html
+ */
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    /* ============================================================
+       UTILIDADES
+       ============================================================ */
+
+    /**
+     * Muestra un mensaje de alerta en un contenedor.
+     * @param {HTMLElement} el - Elemento del alert
+     * @param {string} msg - Mensaje a mostrar
+     */
+    function showAlert(el, msg) {
+        if (!el) return;
+        el.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            ${msg}
+        `;
+        el.style.display = 'flex';
+    }
+
+    /**
+     * Oculta una alerta.
+     * @param {HTMLElement} el
+     */
+    function hideAlert(el) {
+        if (!el) return;
+        el.style.display = 'none';
+        el.innerHTML = '';
+    }
+
+    /**
+     * Marca un input con error.
+     * @param {HTMLElement} input
+     * @param {string} msg
+     * @param {HTMLElement|null} errorEl
+     */
+    function setError(input, msg, errorEl) {
+        input.classList.add('nt-input--error');
+        input.classList.remove('nt-input--success');
+        if (errorEl) errorEl.textContent = msg;
+    }
+
+    /**
+     * Marca un input como válido.
+     * @param {HTMLElement} input
+     * @param {HTMLElement|null} errorEl
+     */
+    function setSuccess(input, errorEl) {
+        input.classList.remove('nt-input--error');
+        input.classList.add('nt-input--success');
+        if (errorEl) errorEl.textContent = '';
+    }
+
+    /**
+     * Limpia estado de un input.
+     * @param {HTMLElement} input
+     * @param {HTMLElement|null} errorEl
+     */
+    function clearState(input, errorEl) {
+        input.classList.remove('nt-input--error', 'nt-input--success');
+        if (errorEl) errorEl.textContent = '';
+    }
+
+    /**
+     * Animación de shake en la card.
+     */
+    function shakeCard() {
+        const card = document.getElementById('authCard');
+        if (!card) return;
+        card.classList.add('nt-shake');
+        card.addEventListener('animationend', () => card.classList.remove('nt-shake'), { once: true });
+    }
+
+
+    /* ============================================================
+       PARTÍCULAS DEL AUTH HERO
+       ============================================================ */
+    const authParticles = document.getElementById('authParticles');
+    if (authParticles) {
+        for (let i = 0; i < 20; i++) {
+            const dot = document.createElement('div');
+            dot.style.cssText = `
+                position: absolute;
+                width: ${Math.random() * 2.5 + 1}px;
+                height: ${Math.random() * 2.5 + 1}px;
+                background: #00ADB5;
+                border-radius: 50%;
+                left: ${Math.random() * 100}%;
+                top: ${Math.random() * 100}%;
+                opacity: ${Math.random() * 0.4 + 0.05};
+                animation: float ${Math.random() * 10 + 8}s ease-in-out infinite;
+                animation-delay: ${Math.random() * 5}s;
+            `;
+            authParticles.appendChild(dot);
+        }
+    }
+
+
+    /* ============================================================
+       SISTEMA DE TABS (SPA)
+       ============================================================ */
+
+    const tabs = document.querySelectorAll('.auth-tab');
+    const panels = document.querySelectorAll('.auth-panel');
+    const tabIndicator = document.getElementById('tabIndicator');
+    const heroTitleText = document.getElementById('heroTitleText');
+    const heroSubtitle = document.getElementById('heroSubtitle');
+
+    // Textos del hero para cada tab
+    const heroContent = {
+        login: {
+            title: 'Iniciar <span class="accent">Sesión</span>',
+            subtitle: 'Accedé a la plataforma NeuralTech y gestioná tus soluciones inteligentes desde un único lugar.'
+        },
+        register: {
+            title: 'Crear <span class="accent">Cuenta</span>',
+            subtitle: 'Registrate en NeuralTech y comenzá a transformar tu negocio con inteligencia artificial avanzada.'
+        }
+    };
+
+    /**
+     * Actualiza la posición del indicador de tab.
+     * @param {HTMLElement} activeTab
+     */
+    function updateIndicator(activeTab) {
+        if (!tabIndicator || !activeTab) return;
+        tabIndicator.style.left   = activeTab.offsetLeft + 'px';
+        tabIndicator.style.width  = activeTab.offsetWidth + 'px';
+    }
+
+    /**
+     * Cambia la tab activa con animación.
+     * @param {string} targetTab - 'login' | 'register'
+     */
+    function switchTab(targetTab) {
+        const targetTabBtn = document.querySelector(`.auth-tab[data-tab="${targetTab}"]`);
+        const targetPanel  = document.getElementById(`panel-${targetTab}`);
+        const currentPanel = document.querySelector('.auth-panel.active');
+
+        if (!targetPanel || (currentPanel && currentPanel.id === `panel-${targetTab}`)) return;
+
+        // --- Tabs ---
+        tabs.forEach(t => {
+            t.classList.remove('active');
+            t.setAttribute('aria-selected', 'false');
+        });
+        targetTabBtn.classList.add('active');
+        targetTabBtn.setAttribute('aria-selected', 'true');
+
+        // --- Indicador ---
+        updateIndicator(targetTabBtn);
+
+        // --- Paneles: fade out → fade in ---
+        if (currentPanel) {
+            currentPanel.classList.add('exiting');
+            currentPanel.classList.remove('active');
+            setTimeout(() => {
+                currentPanel.classList.remove('exiting');
+            }, 200);
+        }
+
+        setTimeout(() => {
+            targetPanel.classList.add('active');
+        }, 150);
+
+        // --- Hero text ---
+        if (heroTitleText && heroContent[targetTab]) {
+            heroTitleText.style.opacity = '0';
+            setTimeout(() => {
+                heroTitleText.innerHTML = heroContent[targetTab].title;
+                heroTitleText.style.opacity = '1';
+                heroTitleText.style.transition = 'opacity 0.4s ease';
+            }, 200);
+        }
+        if (heroSubtitle && heroContent[targetTab]) {
+            heroSubtitle.style.opacity = '0';
+            setTimeout(() => {
+                heroSubtitle.textContent = heroContent[targetTab].subtitle;
+                heroSubtitle.style.opacity = '1';
+                heroSubtitle.style.transition = 'opacity 0.4s ease';
+            }, 250);
+        }
+    }
+
+    // Click en tabs
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+    });
+
+    // Botones "switch" dentro de los paneles (ej: "¿No tenés cuenta? Registrarse →")
+    document.querySelectorAll('.nt-tab-switch-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.switch));
+    });
+
+    // Inicializar indicador en la tab activa
+    const activeTabOnLoad = document.querySelector('.auth-tab.active');
+    if (activeTabOnLoad) updateIndicator(activeTabOnLoad);
+
+    // Si Django redirige con ?tab=register (ej: error en registro)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('tab') === 'register') {
+        switchTab('register');
+    }
+
+    // Si hay errores en el formulario de registro (Django los renderiza en el panel),
+    // abrir automáticamente el panel de registro
+    const registerPanel = document.getElementById('panel-register');
+    if (registerPanel) {
+        const djangoErrors = registerPanel.querySelectorAll('.errorlist, .nt-alert--error');
+        if (djangoErrors.length > 0) {
+            // Verificar que al menos uno tenga contenido
+            const hasErrors = Array.from(djangoErrors).some(el => el.textContent.trim().length > 0);
+            if (hasErrors) switchTab('register');
+        }
+    }
+
+    // Recalcular indicador en resize
+    window.addEventListener('resize', () => {
+        const at = document.querySelector('.auth-tab.active');
+        if (at) updateIndicator(at);
+    });
+
+
+    /* ============================================================
+       TOGGLE MOSTRAR / OCULTAR CONTRASEÑA
+       ============================================================ */
+    document.querySelectorAll('.nt-toggle-pw').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetId = btn.dataset.target;
+            const input = document.getElementById(targetId) || btn.closest('.nt-input-wrap')?.querySelector('input[type="password"], input[type="text"]');
+            if (!input) return;
+
+            const eyeOn  = btn.querySelector('.eye-icon');
+            const eyeOff = btn.querySelector('.eye-off-icon');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                if (eyeOn)  eyeOn.style.display  = 'none';
+                if (eyeOff) eyeOff.style.display = '';
+                btn.setAttribute('aria-label', 'Ocultar contraseña');
+            } else {
+                input.type = 'password';
+                if (eyeOn)  eyeOn.style.display  = '';
+                if (eyeOff) eyeOff.style.display = 'none';
+                btn.setAttribute('aria-label', 'Mostrar contraseña');
+            }
+        });
+    });
+
+
+    /* ============================================================
+       BARRA DE FORTALEZA DE CONTRASEÑA
+       ============================================================ */
+    const pw1 = document.getElementById('id_password1');
+    const strengthBarWrap = document.getElementById('strengthBarWrap');
+    const strengthFill    = document.getElementById('strengthFill');
+    const strengthLabel   = document.getElementById('strengthLabel');
+
+    const strengthLevels = [
+        { label: 'Muy débil',  level: 1 },
+        { label: 'Débil',      level: 1 },
+        { label: 'Regular',    level: 2 },
+        { label: 'Buena',      level: 3 },
+        { label: 'Excelente',  level: 4 },
+    ];
+
+    function calcStrength(val) {
+        if (!val) return 0;
+        let score = 0;
+        if (val.length >= 8)              score++;
+        if (/[A-Z]/.test(val))            score++;
+        if (/[0-9]/.test(val))            score++;
+        if (/[^A-Za-z0-9]/.test(val))     score++;
+        return score;
+    }
+
+    if (pw1) {
+        pw1.addEventListener('input', () => {
+            const val = pw1.value;
+
+            if (!val) {
+                if (strengthBarWrap) strengthBarWrap.style.display = 'none';
+                return;
+            }
+
+            if (strengthBarWrap) strengthBarWrap.style.display = 'flex';
+            const score = calcStrength(val);
+            const lvl   = strengthLevels[score];
+
+            if (strengthBarWrap) strengthBarWrap.dataset.level = lvl.level;
+            if (strengthLabel)   strengthLabel.textContent     = lvl.label;
+        });
+    }
+
+
+    /* ============================================================
+       VALIDACIÓN FORMULARIO LOGIN
+       ============================================================ */
+    const loginForm = document.getElementById('loginForm');
+
+    if (loginForm) {
+        const loginUsername = document.getElementById('login_username');
+        const loginPassword = document.getElementById('login_password');
+        const loginAlert    = document.getElementById('loginAlert');
+
+        // Limpiar al escribir
+        [loginUsername, loginPassword].forEach(input => {
+            if (!input) return;
+            input.addEventListener('input', () => {
+                clearState(input, document.getElementById(`err-${input.id}`));
+                hideAlert(loginAlert);
+            });
+        });
+
+        loginForm.addEventListener('submit', function(e) {
+            let valid = true;
+
+            // Usuario
+            if (loginUsername) {
+                const errEl = document.getElementById('err-login_username');
+                if (!loginUsername.value.trim()) {
+                    setError(loginUsername, 'Ingresá tu usuario o email.', errEl);
+                    valid = false;
+                } else {
+                    setSuccess(loginUsername, errEl);
+                }
+            }
+
+            // Contraseña
+            if (loginPassword) {
+                const errEl = document.getElementById('err-login_password');
+                if (!loginPassword.value) {
+                    setError(loginPassword, 'Ingresá tu contraseña.', errEl);
+                    valid = false;
+                } else {
+                    setSuccess(loginPassword, errEl);
+                }
+            }
+
+            if (!valid) {
+                e.preventDefault();
+                shakeCard();
+                showAlert(loginAlert, 'Completá todos los campos requeridos.');
+                // Scroll al error
+                const firstError = loginForm.querySelector('.nt-input--error');
+                if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            // Animación de carga
+            const btn      = document.getElementById('loginSubmitBtn');
+            const btnText  = btn?.querySelector('.btn-text');
+            const btnLoad  = btn?.querySelector('.btn-loading');
+            if (btn && btnText && btnLoad) {
+                btnText.style.display = 'none';
+                btnLoad.style.display = 'flex';
+                btn.disabled = true;
+            }
+        });
+    }
+
+
+    /* ============================================================
+       VALIDACIÓN FORMULARIO REGISTRO
+       ============================================================ */
+    const registerForm = document.getElementById('registerForm');
+
+    if (registerForm) {
+        const pw2         = document.getElementById('id_password2');
+        const termsCheck  = document.getElementById('termsCheck');
+        const regAlert    = document.getElementById('registerAlert');
+
+        // Validación en tiempo real: confirmar contraseña
+        if (pw1 && pw2) {
+            pw2.addEventListener('input', () => {
+                const errEl = document.getElementById('err-password2');
+                if (!pw2.value) {
+                    clearState(pw2, errEl);
+                    return;
+                }
+                if (pw1.value === pw2.value) {
+                    setSuccess(pw2, errEl);
+                } else {
+                    setError(pw2, 'Las contraseñas no coinciden.', errEl);
+                }
+            });
+        }
+
+        // Limpiar errores al escribir en cualquier input del registro
+        registerForm.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', () => {
+                input.classList.remove('nt-input--error');
+                hideAlert(regAlert);
+            });
+        });
+
+        registerForm.addEventListener('submit', function(e) {
+            let valid = true;
+            hideAlert(regAlert);
+
+            // Función helper de validación de campo
+            function validateInput(inputId, errorId, validator) {
+                const input  = document.getElementById(inputId);
+                const errEl  = document.getElementById(errorId);
+                if (!input) return;
+                const msg = validator(input.value);
+                if (msg) {
+                    setError(input, msg, errEl);
+                    valid = false;
+                } else {
+                    setSuccess(input, errEl);
+                }
+            }
+
+            validateInput('id_first_name',  'err-first_name',   v => !v.trim() ? 'Ingresá tu nombre.'    : '');
+            validateInput('id_last_name',   'err-last_name',    v => !v.trim() ? 'Ingresá tu apellido.'  : '');
+            validateInput('id_email',       'err-email',        v => {
+                if (!v.trim())                              return 'Ingresá tu email.';
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return 'Ingresá un email válido.';
+                return '';
+            });
+            validateInput('id_password1',   'err-password1',    v => {
+                if (!v)         return 'Ingresá una contraseña.';
+                if (v.length < 8) return 'La contraseña debe tener al menos 8 caracteres.';
+                return '';
+            });
+            validateInput('id_password2',   'err-password2',    v => {
+                const p1 = document.getElementById('id_password1');
+                if (!v)                     return 'Confirmá tu contraseña.';
+                if (p1 && v !== p1.value)   return 'Las contraseñas no coinciden.';
+                return '';
+            });
+
+            // Términos
+            if (termsCheck && !termsCheck.checked) {
+                const errEl = document.getElementById('err-terms');
+                if (errEl) errEl.textContent = 'Debés aceptar los términos y condiciones.';
+                valid = false;
+            } else if (termsCheck) {
+                const errEl = document.getElementById('err-terms');
+                if (errEl) errEl.textContent = '';
+            }
+
+            if (!valid) {
+                e.preventDefault();
+                shakeCard();
+                showAlert(regAlert, 'Revisá los campos marcados en rojo.');
+                const firstError = registerForm.querySelector('.nt-input--error');
+                if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            // Animación carga
+            const btn     = document.getElementById('registerSubmitBtn');
+            const btnText = btn?.querySelector('.btn-text');
+            const btnLoad = btn?.querySelector('.btn-loading');
+            if (btn && btnText && btnLoad) {
+                btnText.style.display = 'none';
+                btnLoad.style.display = 'flex';
+                btn.disabled = true;
+            }
+        });
+    }
+
+
+    /* ============================================================
+       POST-REGISTRO: si Django redirigió con ?registered=true,
+       mostrar tab de login con mensaje de éxito
+       ============================================================ */
+    if (urlParams.get('registered') === 'true') {
+        switchTab('login');
+        const loginSuccess = document.getElementById('loginSuccess');
+        if (loginSuccess) {
+            loginSuccess.innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                ¡Cuenta creada con éxito! Podés iniciar sesión ahora.
+            `;
+            loginSuccess.style.display = 'flex';
+        }
+    }
+
+
+    /* ============================================================
+       APLICAR CLASES nt-input A WIDGETS DE DJANGO
+       (por si Django genera inputs sin la clase)
+       ============================================================ */
+    document.querySelectorAll('.nt-input-wrap input').forEach(input => {
+        if (!input.classList.contains('nt-input')) {
+            input.classList.add('nt-input');
+        }
+    });
+
+    console.log('%c[NEURALTECH] Auth module online.', 'color: #00ADB5; font-family: monospace; font-size: 12px;');
+
+}); // END DOMContentLoaded
+
 /**
  * NeuralTech — contacto_ajax.js
  * Integración dinámica con JavaScript / Fetch API (Unidad 3 - Punto 2)

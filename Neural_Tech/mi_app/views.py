@@ -119,17 +119,25 @@ def registro(request):
                     request,
                     'Acceso restringido. No está autorizado a utilizar este sistema.'
                 )
-                return render(request, 'mi_app/registro.html', {'form': form})
+                return render(request, 'mi_app/registro.html', {'register_form': form})
 
-            # Crear usuario inactivo hasta que valide el código
-            user = User.objects.create_user(
+            # Si ya existe un usuario con ese email/username, evitar el error
+            # de integridad y reutilizar la cuenta para reenviar el código
+            user, creado = User.objects.get_or_create(
                 username=email,
-                email=email,
-                password=form.cleaned_data['password1'],
-                first_name=nombre,
-                last_name=apellido,
-                is_active=False,
+                defaults={
+                    'email': email,
+                    'first_name': nombre,
+                    'last_name': apellido,
+                    'is_active': False,
+                }
             )
+            user.set_password(form.cleaned_data['password1'])
+            user.first_name = nombre
+            user.last_name = apellido
+            if not user.is_active:
+                user.is_active = False
+            user.save()
 
             # Guardar datos en sesión para la validación
             request.session['validacion_user_id'] = user.id
@@ -157,7 +165,7 @@ def registro(request):
     else:
         form = RegistroForm()
 
-    return render(request, 'mi_app/registro.html', {'form': form})
+    return render(request, 'mi_app/registro.html', {'register_form': form})
 
 
 def validar_cuenta(request):
@@ -191,12 +199,31 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
+
+        # En este sitio el "usuario" es el email (ver RegistroForm: username = email)
         user = authenticate(request, username=username, password=password)
 
-        if user:
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+
+        if user is not None:
+            if not user.is_active:
+                mensaje = 'Tu cuenta todavía no fue validada. Revisá tu correo.'
+                if is_ajax:
+                    return JsonResponse({'success': False, 'message': mensaje})
+                messages.error(request, mensaje)
+                return render(request, 'mi_app/login.html')
+
             login(request, user)
-            return JsonResponse({'success': True})
-        return JsonResponse({'success': False, 'message': 'Credenciales inválidas'})
+
+            if is_ajax:
+                return JsonResponse({'success': True, 'redirect_url': '/dashboard/'})
+            return redirect('dashboard')
+
+        mensaje = 'Usuario o contraseña incorrectos.'
+        if is_ajax:
+            return JsonResponse({'success': False, 'message': mensaje}, status=400)
+        messages.error(request, mensaje)
+        return render(request, 'mi_app/login.html')
 
     return render(request, 'mi_app/login.html')
 

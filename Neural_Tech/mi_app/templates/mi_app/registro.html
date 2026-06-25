@@ -273,28 +273,6 @@
                                 {% endif %}
                             </div>
 
-                            <!-- Usuario -->
-                            <div class="nt-field">
-                                <label class="nt-label" for="id_username">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                                    Usuario <span class="required">*</span>
-                                </label>
-                                <div class="nt-input-wrap">
-                                    {% if register_form %}
-                                        {{ register_form.username }}
-                                    {% else %}
-                                        <input type="text" id="id_username" name="username" class="nt-input" placeholder="mi_usuario_neural" required>
-                                    {% endif %}
-                                </div>
-                                {% if register_form %}
-                                    {% for error in register_form.username.errors %}
-                                        <span class="nt-error-msg">{{ error }}</span>
-                                    {% endfor %}
-                                {% else %}
-                                    <span class="nt-error-msg" id="err-reg-username"></span>
-                                {% endif %}
-                            </div>
-
                             <!-- Contraseña -->
                             <div class="nt-field">
                                 <label class="nt-label" for="id_password1">
