@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Editar consulta — Neural Tech{% endblock %}
+{% block content %}
+<div class="dashboard-container">
+  <div class="dash-header">
+    <h1>Editar consulta #{{ consulta.pk }}</h1>
+    <a href="{% url 'dashboard' %}" class="btn-logout">← Volver al panel</a>
+  </div>
+
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="alert alert-{{ msg.tags }}">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="POST" class="edit-form">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}
+          <span class="field-error">{{ field.errors.0 }}</span>
+        {% endif %}
+      </div>
+    {% endfor %}
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Guardar cambios</button>
+      <a href="{% url 'dashboard' %}" class="btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

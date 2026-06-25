@@ -1,0 +1,11 @@
+[
+    {
+        "model": "mi_app.usuariopermitido",
+        "pk": 1,
+        "fields": {
+            "nombre": "Analía Villegas",
+            "email": "annavillegas@live.com.ar",
+            "codigo_validacion": "NEURAL2026"
+        }
+    }
+]

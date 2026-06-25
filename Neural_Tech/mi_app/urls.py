@@ -1,12 +1,7 @@
-from django.urls import path, include
-from django.contrib.auth import views as auth_views
-from rest_framework.routers import DefaultRouter
 
+
+from django.urls import path
 from . import views
-from .views import contacto, ProductoViewSet
-
-router = DefaultRouter()
-router.register(r'productos', ProductoViewSet)
 
 urlpatterns = [
     # Páginas principales
@@ -16,14 +11,16 @@ urlpatterns = [
     path('contacto/',   views.contacto,      name='contacto'),
 
     # Autenticación
-    path('registro/', views.registro,   name='registro'),
-    path('login/',    views.login_view, name='login'),
-    path('logout/',   auth_views.LogoutView.as_view(), name='logout'),
+    path('registro/',       views.registro,       name='registro'),
+    path('login/',          views.login_view,      name='login'),
+    path('logout/',         views.logout_view,     name='logout'),
+    path('validar-cuenta/', views.validar_cuenta,  name='validar_cuenta'),
 
-    # Dashboard —
-    path('dashboard/',                    views.dashboard,         name='dashboard'),
-    path('dashboard/eliminar/<int:pk>/',  views.eliminar_consulta, name='eliminar_consulta'),
+    # Dashboard
+    path('dashboard/',                           views.dashboard,         name='dashboard'),
+    path('dashboard/eliminar/<int:pk>/',         views.eliminar_consulta, name='eliminar_consulta'),
+    path('dashboard/editar/<int:pk>/',           views.editar_consulta,   name='editar_consulta'),
 
-    # API REST
-    path('api/', include(router.urls)),
+    # API propia — Consigna 6
+    path('api/consultas/', views.api_consultas, name='api_consultas'),
 ]

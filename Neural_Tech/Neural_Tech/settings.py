@@ -85,15 +85,14 @@ WSGI_APPLICATION = 'Neural_Tech.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neuraltech_db',
-        'USER': 'postgres',
-        'PASSWORD':'12345678',
-        'HOST':'localhost',
-        'PORT':'5432',
-    }
-}
+    'default': dj_database_url.config(
+
+    default= 'postgresql://proyectodjango_mbzf_user:GEBvFrOkWS4YT5hd1ikWEOtmn4MjjhD9@dpg-d8u6qjkvikkc73d9b8n0-a.oregon-postgres.render.com/proyectodjango_mbzf',
+    conn_max_age=600,
+    ssl_require=True
+    )
+
+   }
 
 
 # Password validation

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Validar cuenta — Neural Tech{% endblock %}
+{% block content %}
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>Validar cuenta</h2>
+    <p>Ingresá el código que recibiste por correo electrónico para activar tu cuenta.</p>
+
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert alert-{{ msg.tags }}">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="codigo">Código de validación</label>
+        <input
+          type="text"
+          name="codigo"
+          id="codigo"
+          class="form-input"
+          placeholder="Ej: NEURAL2026"
+          required
+          autocomplete="off"
+        >
+      </div>
+      <button type="submit" class="btn-primary">Validar cuenta</button>
+    </form>
+
+    <p class="auth-link">
+      ¿No recibiste el código?
+      <a href="{% url 'registro' %}">Volvé a registrarte</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
