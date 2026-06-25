@@ -113,6 +113,43 @@
     </div>
 </section>
 
+<!-- NOTICIAS DE IA — API EXTERNA (Consigna 6) -->
+<section class="section">
+    <div class="container">
+        <div class="section-header centered">
+            <span class="section-tag">En vivo · Hacker News</span>
+            <h2 class="section-title">Últimas <span class="accent">Noticias de IA</span></h2>
+            <p class="section-desc">
+                Contenido actualizado en tiempo real, consumido desde la API pública de Hacker News.
+            </p>
+        </div>
+
+        {% if noticias_ia %}
+        <div class="tech-categories">
+            {% for noticia in noticias_ia %}
+            <div class="tech-category" data-aos="fade-up">
+                <h3 class="tech-cat-title" style="font-size: 1rem;">
+                    <a href="{{ noticia.url }}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
+                        {{ noticia.titulo }}
+                    </a>
+                </h3>
+                <div class="tech-pills">
+                    <span class="tech-pill">⭐ {{ noticia.puntos }} puntos</span>
+                    {% if noticia.autor %}
+                        <span class="tech-pill">{{ noticia.autor }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="dash-empty">
+            <p>No se pudieron cargar las noticias en este momento. Probá de nuevo más tarde.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
 <!-- HOW IT WORKS -->
 <section class="section architecture-section">
     <div class="container">

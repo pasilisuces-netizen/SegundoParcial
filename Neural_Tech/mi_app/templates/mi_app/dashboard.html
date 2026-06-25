@@ -127,14 +127,19 @@
                                 </span>
                             </td>
                             <td>
-                                <form method="post"
-                                      action="{% url 'eliminar_consulta' c.pk %}"
-                                      onsubmit="return confirm('¿Eliminás esta consulta de {{ c.nombre }}?');">
-                                    {% csrf_token %}
-                                    <button type="submit" class="dash-btn-eliminar">
-                                        Eliminar
-                                    </button>
-                                </form>
+                                <div class="dash-acciones">
+                                    <a href="{% url 'editar_consulta' c.pk %}" class="dash-btn-editar">
+                                        Editar
+                                    </a>
+                                    <form method="post"
+                                          action="{% url 'eliminar_consulta' c.pk %}"
+                                          onsubmit="return confirm('¿Eliminás esta consulta de {{ c.nombre }}?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dash-btn-eliminar">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}

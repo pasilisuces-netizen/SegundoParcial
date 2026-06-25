@@ -5,6 +5,8 @@ services:
     buildCommand: |
       pip install -r requirements.txt &&
       python manage.py migrate &&
+      python manage.py loaddata mi_app/fixtures/usuarios_permitidos.json &&
+      python manage.py shell -c "from Neural_Tech.create_superuser import crear_superusuario; crear_superusuario()" &&
       python manage.py collectstatic --noinput
     startCommand: "gunicorn Neural_Tech.wsgi:application"
     envVars:
@@ -12,3 +14,9 @@ services:
         value: Neural_Tech.settings
       - key: DATABASE_URL
         value: postgresql://proyectodjango_mbzf_user:GEBvFrOkWS4YT5hd1ikWEOtmn4MjjhD9@dpg-d8u6qjkvikkc73d9b8n0-a.oregon-postgres.render.com/proyectodjango_mbzf
+      - key: DJANGO_SUPERUSER_USERNAME
+        value: postgres
+      - key: DJANGO_SUPERUSER_EMAIL
+        value: admin@mail.com
+      - key: DJANGO_SUPERUSER_PASSWORD
+        value: Djangoostgresql://proyectodjango_mbzf_user:GEBvFrOkWS4YT5hd1ikWEOtmn4MjjhD9@dpg-d8u6qjkvikkc73d9b8n0-a.oregon-postgres.render.com/proyectodjango_mbzf

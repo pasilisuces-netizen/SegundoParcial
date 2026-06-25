@@ -8,8 +8,16 @@ from django.http import JsonResponse
 from django.db.models import Count
 from django.core.mail import send_mail
 
+import requests
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework import status
+
 from .forms import ContactoForm, RegistroForm
 from .models import Consultas, UsuarioPermitido, clasificar_mensaje
+from .serializers import ConsultaSerializer
 
 
 # ─── PÁGINAS PRINCIPALES ────────────────────────────────────────────────────
@@ -23,7 +31,41 @@ def servicios(request):
 
 
 def tecnologia(request):
-    return render(request, 'mi_app/tecnologia.html')
+    """
+    Consumo de API externa — Consigna 6.
+    Se utiliza la API pública de Hacker News (Algolia Search API),
+    gratuita y sin necesidad de API key, para mostrar las últimas
+    noticias relacionadas con Inteligencia Artificial.
+    Documentación: https://hn.algolia.com/api
+    """
+    noticias_ia = []
+    try:
+        respuesta = requests.get(
+            'https://hn.algolia.com/api/v1/search_by_date',
+            params={
+                'query': 'artificial intelligence',
+                'tags': 'story',
+                'hitsPerPage': 6,
+            },
+            timeout=5,
+        )
+        if respuesta.status_code == 200:
+            datos = respuesta.json()
+            for hit in datos.get('hits', []):
+                if hit.get('title'):
+                    noticias_ia.append({
+                        'titulo': hit.get('title'),
+                        'url': hit.get('url') or f"https://news.ycombinator.com/item?id={hit.get('objectID')}",
+                        'puntos': hit.get('points', 0),
+                        'autor': hit.get('author', ''),
+                        'fecha': hit.get('created_at', ''),
+                    })
+    except requests.exceptions.RequestException:
+        # Si la API externa no responde, la página sigue funcionando
+        # simplemente sin la sección de noticias.
+        noticias_ia = []
+
+    return render(request, 'mi_app/tecnologia.html', {'noticias_ia': noticias_ia})
 
 
 # ─── CONTACTO ────────────────────────────────────────────────────────────────
@@ -291,25 +333,14 @@ def editar_consulta(request, pk):
                   {'form': form, 'consulta': consulta})
 
 
-# ─── API PROPIA — CONSIGNA 6 ─────────────────────────────────────────────────
+# ─── API PROPIA — CONSIGNA 6 (Django REST Framework) ────────────────────────
 
-from django.http import JsonResponse as _JsonResponse
-
+@api_view(['GET'])
+@permission_classes([AllowAny])
 def api_consultas(request):
     """
-    GET /api/consultas/
-    Devuelve todas las consultas en formato JSON.
-    Requerido por la consigna 6.
-    """
-    consultas = list(
-        Consultas.objects.values(
-            'id', 'nombre', 'apellido', 'email',
-            'empresa', 'servicio', 'mensaje',
-            'categoria', 'fecha_envio'
-        )
-    )
-    # fecha_envio no es serializable directamente — convertir a string
-    for c in consultas:
-        c['fecha_envio'] = c['fecha_envio'].strftime('%Y-%m-%d %H:%M:%S') if c['fecha_envio'] else None
 
-    return _JsonResponse({'consultas': consultas}, safe=False)
+    """
+    consultas = Consultas.objects.all()
+    serializer = ConsultaSerializer(consultas, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
