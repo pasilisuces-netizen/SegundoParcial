@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
@@ -14,6 +14,14 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 
 import requests
+import secrets
+
+# Decorador para restringir vistas solo a usuarios administradores
+# (logueado + is_staff=True). Si no cumple, lo manda al login.
+solo_admin = user_passes_test(
+    lambda user: user.is_authenticated and user.is_staff,
+    login_url='login'
+)
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -159,15 +167,11 @@ def registro(request):
             nombre   = form.cleaned_data['first_name']
             apellido = form.cleaned_data['last_name']
 
-            # Verificar si el email está en la tabla de usuarios permitidos
-            try:
-                permitido = UsuarioPermitido.objects.get(email=email)
-            except UsuarioPermitido.DoesNotExist:
-                messages.error(
-                    request,
-                    'Acceso restringido. No está autorizado a utilizar este sistema.'
-                )
-                return render(request, 'mi_app/registro.html', {'register_form': form})
+            # Cualquier persona puede registrarse: ya no se exige estar
+            # precargado en la tabla UsuarioPermitido. Esa tabla ahora solo
+            # se usa para decidir quién obtiene permisos de administrador
+            # (ver validar_cuenta).
+            codigo_generado = f"{secrets.randbelow(1000000):06d}"
 
             # Si ya existe un usuario con ese email/username, evitar el error
             # de integridad y reutilizar la cuenta para reenviar el código
@@ -189,7 +193,7 @@ def registro(request):
 
             # Guardar datos en sesión para la validación
             request.session['validacion_user_id'] = user.id
-            request.session['validacion_codigo']  = permitido.codigo_validacion
+            request.session['validacion_codigo']  = codigo_generado
 
             # Enviar mail con el código
             try:
@@ -197,7 +201,7 @@ def registro(request):
                     'Validación de cuenta — Neural Tech',
                     (
                         f'Hola {nombre},\n\n'
-                        f'Tu código de validación es: {permitido.codigo_validacion}\n\n'
+                        f'Tu código de validación es: {codigo_generado}\n\n'
                         f'Ingresá en el sitio y usá ese código para activar tu cuenta.'
                     ),
                     settings.DEFAULT_FROM_EMAIL,
@@ -226,6 +230,16 @@ def validar_cuenta(request):
             try:
                 user = User.objects.get(id=user_id)
                 user.is_active = True
+
+                # Si el administrador autorizó este email en la tabla
+                # UsuarioPermitido (tildando "autorizado_admin" desde el
+                # panel /admin/), el usuario obtiene acceso al dashboard.
+                permitido = UsuarioPermitido.objects.filter(
+                    email=user.email, autorizado_admin=True
+                ).first()
+                if permitido:
+                    user.is_staff = True
+
                 user.save()
                 login(request, user,
                       backend='django.contrib.auth.backends.ModelBackend')
@@ -390,7 +404,7 @@ def restablecer_contrasena(request, uidb64, token):
 
 # ─── DASHBOARD — CONSIGNA 3 ──────────────────────────────────────────────────
 
-@login_required
+@solo_admin
 def dashboard(request):
     consultas = Consultas.objects.all()
     total = consultas.count()
@@ -407,7 +421,7 @@ def dashboard(request):
     })
 
 
-@login_required
+@solo_admin
 def eliminar_consulta(request, pk):
     if request.method == 'POST':
         consulta = get_object_or_404(Consultas, pk=pk)
@@ -416,7 +430,7 @@ def eliminar_consulta(request, pk):
     return redirect('dashboard')
 
 
-@login_required
+@solo_admin
 def editar_consulta(request, pk):
     consulta = get_object_or_404(Consultas, pk=pk)
     if request.method == 'POST':
@@ -448,7 +462,7 @@ def editar_consulta(request, pk):
 
 # ─── CMS (Content Management System) — Consigna 4 ───────────────────────────
 
-@login_required
+@solo_admin
 def cms_contenido(request):
     """
     Panel de administración · Gestor de Contenidos (CMS).
