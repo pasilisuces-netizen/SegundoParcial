@@ -1,12 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.conf import settings
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
 from django.http import JsonResponse
 from django.db.models import Count
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.urls import reverse
 
 import requests
 
@@ -15,7 +20,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 
-from .forms import ContactoForm, RegistroForm
+from .forms import ContactoForm, RegistroForm, SolicitarResetForm, NuevaContrasenaForm
 from .models import Consultas, UsuarioPermitido, clasificar_mensaje
 from .serializers import ConsultaSerializer
 
@@ -273,6 +278,113 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+
+# ─── OLVIDÉ MI CONTRASEÑA — Consigna 3 (Autenticación) ──────────────────────
+
+def olvide_contrasena(request):
+    """
+    Paso 1 del flujo 'Olvidé mi contraseña'.
+    El usuario ingresa su correo electrónico:
+      - Si el correo pertenece a un usuario registrado, se genera un
+        enlace único (uid + token) y se envía por email.
+      - Si el correo NO está registrado, se muestra una alerta indicándolo.
+    """
+    if request.method == 'POST':
+        form = SolicitarResetForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+
+            try:
+                user = User.objects.get(email__iexact=email)
+            except User.DoesNotExist:
+                user = None
+
+            if user is not None:
+                uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+                token = default_token_generator.make_token(user)
+
+                enlace_relativo = reverse(
+                    'restablecer_contrasena',
+                    kwargs={'uidb64': uidb64, 'token': token}
+                )
+                enlace_completo = request.build_absolute_uri(enlace_relativo)
+
+                cuerpo = (
+                    f'Hola {user.first_name or user.username},\n\n'
+                    f'Recibimos una solicitud para restablecer tu contraseña en NeuralTech.\n\n'
+                    f'Para elegir una nueva contraseña, ingresá al siguiente enlace:\n'
+                    f'{enlace_completo}\n\n'
+                    f'Si vos no solicitaste este cambio, podés ignorar este mensaje: '
+                    f'tu contraseña actual seguirá funcionando con normalidad.\n\n'
+                    f'— El equipo de NeuralTech'
+                )
+
+                try:
+                    send_mail(
+                        'Restablecer tu contraseña — NeuralTech',
+                        cuerpo,
+                        settings.DEFAULT_FROM_EMAIL,
+                        [user.email],
+                        fail_silently=True,
+                    )
+                except Exception:
+                    pass
+
+                messages.success(
+                    request,
+                    'Te enviamos un correo con las instrucciones para restablecer tu contraseña.'
+                )
+                return redirect('olvide_contrasena')
+
+            # El correo no corresponde a ningún usuario registrado
+            messages.error(request, 'Ese correo no se encuentra registrado.')
+    else:
+        form = SolicitarResetForm()
+
+    return render(request, 'mi_app/olvide_contrasena.html', {'form': form})
+
+
+def restablecer_contrasena(request, uidb64, token):
+    """
+    Paso 2 del flujo 'Olvidé mi contraseña'.
+    Valida el uid + token recibidos en el enlace del email y, si son
+    correctos, permite al usuario definir una nueva contraseña.
+    Al finalizar, redirige al inicio de sesión.
+    """
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    token_valido = user is not None and default_token_generator.check_token(user, token)
+
+    if not token_valido:
+        messages.error(
+            request,
+            'El enlace de restablecimiento no es válido o ya expiró. Solicitá uno nuevo.'
+        )
+        return redirect('olvide_contrasena')
+
+    if request.method == 'POST':
+        form = NuevaContrasenaForm(request.POST)
+        if form.is_valid():
+            user.set_password(form.cleaned_data['password1'])
+            user.save()
+            messages.success(
+                request,
+                'Tu contraseña fue actualizada correctamente. Iniciá sesión con tu nueva contraseña.'
+            )
+            return redirect('login')
+    else:
+        form = NuevaContrasenaForm()
+
+    return render(request, 'mi_app/restablecer_contrasena.html', {
+        'form': form,
+        'uidb64': uidb64,
+        'token': token,
+    })
 
 
 # ─── DASHBOARD — CONSIGNA 3 ──────────────────────────────────────────────────

@@ -3,6 +3,7 @@
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
     # Páginas principales
     path('',            views.pagina_inicio, name='inicio'),
@@ -15,6 +16,12 @@ urlpatterns = [
     path('login/',          views.login_view,      name='login'),
     path('logout/',         views.logout_view,     name='logout'),
     path('validar-cuenta/', views.validar_cuenta,  name='validar_cuenta'),
+
+    # Olvidé mi contraseña
+    path('olvide-contrasena/',
+         views.olvide_contrasena, name='olvide_contrasena'),
+    path('restablecer-contrasena/<uidb64>/<token>/',
+         views.restablecer_contrasena, name='restablecer_contrasena'),
 
     # Dashboard
     path('dashboard/',                           views.dashboard,         name='dashboard'),

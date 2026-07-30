@@ -1,33 +1,99 @@
 {% extends 'base.html' %}
-{% block title %}Editar consulta — Neural Tech{% endblock %}
+{% load static %}
+
+{% block title %}Editar consulta · Panel de Administración | NeuralTech{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'mi_app/styles.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="dashboard-container">
-  <div class="dash-header">
-    <h1>Editar consulta #{{ consulta.pk }}</h1>
-    <a href="{% url 'dashboard' %}" class="btn-logout">← Volver al panel</a>
-  </div>
 
-  {% if messages %}
-    {% for msg in messages %}
-      <div class="alert alert-{{ msg.tags }}">{{ msg }}</div>
-    {% endfor %}
-  {% endif %}
-
-  <form method="POST" class="edit-form">
-    {% csrf_token %}
-    {% for field in form %}
-      <div class="form-group">
-        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-        {{ field }}
-        {% if field.errors %}
-          <span class="field-error">{{ field.errors.0 }}</span>
-        {% endif %}
-      </div>
-    {% endfor %}
-    <div class="form-actions">
-      <button type="submit" class="btn-primary">Guardar cambios</button>
-      <a href="{% url 'dashboard' %}" class="btn-secondary">Cancelar</a>
+<!-- HERO -->
+<section class="page-hero">
+    <div class="page-hero-bg">
+        <div class="hero-grid"></div>
     </div>
-  </form>
-</div>
+    <div class="container">
+        <div class="page-hero-content">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                <span>Usuario autenticado · Sistema activo</span>
+            </div>
+            <h1 class="page-hero-title">
+                Panel de <span class="accent">Administración</span>
+            </h1>
+            <p>Edición de una consulta recibida por el formulario de contacto.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+
+        <!-- ENCABEZADO -->
+        <div class="dash-header">
+            <div>
+                <h2 class="dash-title">
+                    Editar consulta <span class="accent">#{{ consulta.pk }}</span>
+                </h2>
+                <p class="dash-subtitle">Modificá los datos y volvé a clasificar la consulta.</p>
+            </div>
+            <a href="{% url 'dashboard' %}" class="dash-logout-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12 19 5 12 12 5"/>
+                </svg>
+                Volver al panel
+            </a>
+        </div>
+
+        <!-- TABS DEL PANEL DE ADMINISTRACIÓN -->
+        <div class="dash-tabs">
+            <a href="{% url 'dashboard' %}" class="dash-tab dash-tab-active">
+                📋 Gestor de Consultas
+            </a>
+            <a href="{% url 'cms_contenido' %}" class="dash-tab">
+                🖊️ Gestor de Contenidos (CMS)
+            </a>
+        </div>
+
+        <!-- MENSAJES DEL SISTEMA -->
+        {% include 'includes/mensajes.html' %}
+
+        <!-- FORMULARIO -->
+        <div class="form-card" style="max-width: 700px;">
+            <div class="form-card-header">
+                <span class="form-tag">Consulta de {{ consulta.nombre }} {{ consulta.apellido }}</span>
+                <div class="form-status">
+                    <span class="badge-dot"></span>
+                    {{ consulta.fecha_envio|date:"d/m/Y H:i" }}
+                </div>
+            </div>
+
+            <form method="POST" class="contact-form" novalidate>
+                {% csrf_token %}
+
+                {% for field in form %}
+                <div class="form-group">
+                    <label class="form-label" for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.field.required %}<span class="required">*</span>{% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <span class="form-error">{{ field.errors|join:" " }}</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                <a href="{% url 'dashboard' %}" class="btn btn-ghost">Cancelar</a>
+            </form>
+        </div>
+
+    </div>
+</section>
+
 {% endblock %}

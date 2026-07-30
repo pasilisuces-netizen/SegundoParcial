@@ -55,15 +55,7 @@
 
                     {% csrf_token %}
 
-                    {% if messages %}
-                        <div class="form-messages">
-                            {% for message in messages %}
-                                <div class="alert alert-error">
-                                    {{message}}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+                    {% include 'includes/mensajes.html' %}
 
                     <div class="form-group">
 
@@ -85,10 +77,15 @@
 
                     <div class="form-group">
 
-                        <label class="form-label">
-                            Contraseña
-                            <span class="required">*</span>
-                        </label>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <label class="form-label" style="margin:0;">
+                                Contraseña
+                                <span class="required">*</span>
+                            </label>
+                            <a href="{% url 'olvide_contrasena' %}" class="link-accent" style="font-size:0.8rem;">
+                                ¿Olvidaste tu contraseña?
+                            </a>
+                        </div>
 
                         <input
                             type="password"

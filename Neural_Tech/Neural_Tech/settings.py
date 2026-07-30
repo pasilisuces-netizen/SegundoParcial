@@ -14,8 +14,6 @@ from pathlib import Path
 
 import dj_database_url
 
-from django.conf.global_settings import EMAIL_BACKEND, EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -86,8 +84,7 @@ WSGI_APPLICATION = 'Neural_Tech.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-
-    default= 'postgresql://proyectodjango_mbzf_user:GEBvFrOkWS4YT5hd1ikWEOtmn4MjjhD9@dpg-d8u6qjkvikkc73d9b8n0-a.oregon-postgres.render.com/proyectodjango_mbzf',
+    default= 'postgresql://db_neural_2325_user:8XUKWKwTtmZCc4LPqog7LYQPxGwTv3fr@dpg-d9ejd3taeets73bas1bg-a.oregon-postgres.render.com/db_neural_2325',
     conn_max_age=600,
     ssl_require=True
     )

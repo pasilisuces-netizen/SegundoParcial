@@ -1,0 +1,34 @@
+{% comment %}
+Sistema único de alertas — Consigna 4, punto 2 (Identidad visual).
+Se incluye en TODAS las páginas con formularios o acciones del Panel de
+Administración, para que el diseño de las alertas sea siempre el mismo:
+validación de errores, envío de formularios, registro, inicio de sesión,
+y alta/edición/baja de consultas.
+
+Uso: {% include 'includes/mensajes.html' %}
+{% endcomment %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="nt-alert nt-alert--{{ message.tags|default:'info' }}">
+            {% if message.tags == 'success' %}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
+                    <path d="M8 12.5l2.5 2.5L16 9.5"/>
+                </svg>
+            {% elif message.tags == 'error' %}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
+                    <line x1="12" y1="8" x2="12" y2="13"/>
+                    <line x1="12" y1="16.5" x2="12.01" y2="16.5"/>
+                </svg>
+            {% else %}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
+                    <line x1="12" y1="16" x2="12" y2="11"/>
+                    <line x1="12" y1="7.5" x2="12.01" y2="7.5"/>
+                </svg>
+            {% endif %}
+            <span>{{ message }}</span>
+        </div>
+    {% endfor %}
+{% endif %}

@@ -9,7 +9,13 @@
 
     {% load static %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="icon" href="{% static 'images/tecnologia.png' %}" type="image/x-icon">
+
+    <!-- Favicon — ícono de marca de la empresa (Consigna 4, punto 2) -->
+    <link rel="icon" href="{% static 'favicon.ico' %}" sizes="any">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
+
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/globalStyles.css' %}">
     {% block extra_css %}{% endblock %}

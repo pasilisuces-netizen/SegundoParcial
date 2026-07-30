@@ -94,3 +94,56 @@ class RegistroForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+# ─── OLVIDÉ MI CONTRASEÑA — Consigna 3 (Autenticación) ──────────────────────
+
+class SolicitarResetForm(forms.Form):
+    """
+    Formulario simple donde el usuario indica su correo electrónico
+    para iniciar el proceso de restablecimiento de contraseña.
+    """
+    email = forms.EmailField(
+        label='Correo electrónico',
+        widget=forms.EmailInput(attrs={
+            'class': 'nt-input',
+            'placeholder': 'correo@ejemplo.com',
+            'autocomplete': 'email',
+        })
+    )
+
+
+class NuevaContrasenaForm(forms.Form):
+    """
+    Formulario para definir la nueva contraseña una vez validado
+    el enlace de restablecimiento (token + uid).
+    """
+    password1 = forms.CharField(
+        label='Nueva contraseña',
+        widget=forms.PasswordInput(attrs={
+            'class': 'nt-input',
+            'placeholder': 'Mínimo 8 caracteres',
+            'autocomplete': 'new-password',
+        })
+    )
+    password2 = forms.CharField(
+        label='Confirmar nueva contraseña',
+        widget=forms.PasswordInput(attrs={
+            'class': 'nt-input',
+            'placeholder': 'Repetí la contraseña',
+            'autocomplete': 'new-password',
+        })
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password1 = cleaned_data.get('password1')
+        password2 = cleaned_data.get('password2')
+
+        if password1 and len(password1) < 8:
+            raise ValidationError('La contraseña debe tener al menos 8 caracteres.')
+
+        if password1 and password2 and password1 != password2:
+            raise ValidationError('Las contraseñas no coinciden.')
+
+        return cleaned_data

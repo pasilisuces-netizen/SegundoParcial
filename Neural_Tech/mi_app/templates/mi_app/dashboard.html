@@ -53,12 +53,18 @@
             </form>
         </div>
 
+        <!-- TABS DEL PANEL DE ADMINISTRACIÓN -->
+        <div class="dash-tabs">
+            <a href="{% url 'dashboard' %}" class="dash-tab dash-tab-active">
+                📋 Gestor de Consultas
+            </a>
+            <a href="{% url 'cms_contenido' %}" class="dash-tab">
+                🖊️ Gestor de Contenidos (CMS)
+            </a>
+        </div>
+
         <!-- MENSAJES DEL SISTEMA -->
-        {% if messages %}
-            {% for message in messages %}
-            <div class="dash-alert dash-alert-success">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
+        {% include 'includes/mensajes.html' %}
 
         <!-- RESUMEN ESTADÍSTICO -->
         <div class="dash-stats-section">

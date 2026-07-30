@@ -1,38 +1,86 @@
 {% extends 'base.html' %}
-{% block title %}Validar cuenta — Neural Tech{% endblock %}
+{% load static %}
+
+{% block title %}Validar cuenta | NeuralTech{% endblock %}
+
 {% block content %}
-<div class="auth-container">
-  <div class="auth-card">
-    <h2>Validar cuenta</h2>
-    <p>Ingresá el código que recibiste por correo electrónico para activar tu cuenta.</p>
 
-    {% if messages %}
-      {% for msg in messages %}
-        <div class="alert alert-{{ msg.tags }}">{{ msg }}</div>
-      {% endfor %}
-    {% endif %}
+<!-- HERO -->
+<section class="page-hero">
+    <div class="page-hero-bg">
+        <div class="hero-grid"></div>
+    </div>
 
-    <form method="POST">
-      {% csrf_token %}
-      <div class="form-group">
-        <label for="codigo">Código de validación</label>
-        <input
-          type="text"
-          name="codigo"
-          id="codigo"
-          class="form-input"
-          placeholder="Ej: NEURAL2026"
-          required
-          autocomplete="off"
-        >
-      </div>
-      <button type="submit" class="btn-primary">Validar cuenta</button>
-    </form>
+    <div class="page-hero-content">
+        <div class="hero-badge">
+            <span class="badge-dot"></span>
+            <span>Acceso Seguro · Sistema IA</span>
+        </div>
 
-    <p class="auth-link">
-      ¿No recibiste el código?
-      <a href="{% url 'registro' %}">Volvé a registrarte</a>
-    </p>
-  </div>
-</div>
+        <h1 class="page-hero-title">
+            Validar <span class="accent">Cuenta</span>
+        </h1>
+
+        <p>
+            Ingresá el código que recibiste por correo electrónico para
+            activar tu cuenta y empezar a usar la plataforma.
+        </p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+
+        <div style="max-width:600px; margin:auto;">
+
+            <div class="form-card">
+
+                <div class="form-card-header">
+                    <span class="form-tag">AUTH SYSTEM</span>
+                    <div class="form-status">
+                        <span class="badge-dot"></span>
+                        ONLINE
+                    </div>
+                </div>
+
+                <form method="POST" class="contact-form">
+
+                    {% csrf_token %}
+
+                    {% include 'includes/mensajes.html' %}
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            Código de validación
+                            <span class="required">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            name="codigo"
+                            id="codigo"
+                            class="form-input"
+                            placeholder="Ej: NEURAL2026"
+                            required
+                            autocomplete="off"
+                        >
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full">
+                        Validar cuenta
+                    </button>
+
+                    <div style="text-align:center;margin-top:1rem;">
+                        <span style="color:var(--text-dim)">¿No recibiste el código?</span>
+                        <a href="{% url 'registro' %}" class="link-accent">Volvé a registrarte</a>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
 {% endblock %}

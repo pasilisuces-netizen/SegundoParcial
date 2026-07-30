@@ -1,7 +1,7 @@
 
 
 from django.contrib import admin
-from .models import Consultas, UsuarioPermitido
+from .models import Consultas, UsuarioPermitido, ContenidoSitio
 
 
 @admin.register(Consultas)
@@ -15,3 +15,9 @@ class ConsultasAdmin(admin.ModelAdmin):
 @admin.register(UsuarioPermitido)
 class UsuarioPermitidoAdmin(admin.ModelAdmin):
     list_display = ['id', 'nombre', 'email', 'codigo_validacion']
+
+
+@admin.register(ContenidoSitio)
+class ContenidoSitioAdmin(admin.ModelAdmin):
+    list_display = ['id', 'pagina', 'titulo', 'actualizado_en']
+    readonly_fields = ['actualizado_en']

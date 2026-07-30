@@ -109,13 +109,7 @@
                     </div>
 
                     {# Mensajes del sistema Django (framework messages) #}
-                    {% if messages %}
-                    <div class="form-messages">
-                        {% for message in messages %}
-                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
+                    {% include 'includes/mensajes.html' %}
 
                     {# Mensaje de éxito cuando se envía sin JS (fallback) #}
                     {% if mensaje_exito %}

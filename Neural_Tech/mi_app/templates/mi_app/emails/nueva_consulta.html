@@ -1,0 +1,39 @@
+{% extends 'mi_app/emails/base_email.html' %}
+
+{% block email_title %}Nueva consulta — NeuralTech{% endblock %}
+
+{% block email_content %}
+<h2 style="color:#EAEAEA; font-size:19px; margin:0 0 16px;">📩 Nueva consulta recibida</h2>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px; border-collapse:collapse;">
+    <tr>
+        <td style="padding:6px 0; color:#6B7280; width:120px;">Nombre</td>
+        <td style="padding:6px 0; color:#EAEAEA;">{{ nombre }} {{ apellido }}</td>
+    </tr>
+    <tr>
+        <td style="padding:6px 0; color:#6B7280;">Email</td>
+        <td style="padding:6px 0; color:#EAEAEA;">{{ email }}</td>
+    </tr>
+    <tr>
+        <td style="padding:6px 0; color:#6B7280;">Empresa</td>
+        <td style="padding:6px 0; color:#EAEAEA;">{{ empresa|default:"No indicada" }}</td>
+    </tr>
+    <tr>
+        <td style="padding:6px 0; color:#6B7280;">Servicio</td>
+        <td style="padding:6px 0; color:#EAEAEA;">{{ servicio }}</td>
+    </tr>
+    <tr>
+        <td style="padding:6px 0; color:#6B7280;">Categoría</td>
+        <td style="padding:6px 0;">
+            <span style="background-color:rgba(0,173,181,0.12); color:#00ADB5; border:1px solid rgba(0,173,181,0.35); border-radius:3px; padding:2px 8px; font-size:12px;">
+                {{ categoria }}
+            </span>
+        </td>
+    </tr>
+</table>
+
+<div style="background-color:rgba(0,173,181,0.06); border:1px solid rgba(0,173,181,0.25); border-left:4px solid #00ADB5; border-radius:4px; padding:14px 16px;">
+    <p style="margin:0; color:#6B7280; font-size:12px; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px;">Mensaje</p>
+    <p style="margin:0; color:#C5C6C7; white-space:pre-line;">{{ mensaje }}</p>
+</div>
+{% endblock %}

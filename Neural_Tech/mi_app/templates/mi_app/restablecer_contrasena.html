@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nueva contraseña | NeuralTech{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="page-hero auth-hero">
+    <div class="page-hero-bg">
+        <div class="hero-grid"></div>
+    </div>
+    <div class="page-hero-content">
+        <div class="hero-badge">
+            <span class="badge-dot"></span>
+            <span>Acceso Seguro · Sistema IA</span>
+        </div>
+        <h1 class="page-hero-title">
+            Elegí tu <span class="accent">Nueva Contraseña</span>
+        </h1>
+        <p>
+            Definí una nueva contraseña para volver a acceder a tu cuenta.
+        </p>
+    </div>
+</section>
+
+<section class="section auth-section">
+    <div class="container">
+        <div class="auth-wrapper">
+            <div class="auth-card">
+
+                <div class="auth-card-header">
+                    <span class="form-tag">NEURAL ACCESS v2.1</span>
+                    <div class="form-status">
+                        <span class="badge-dot"></span>
+                        ONLINE
+                    </div>
+                </div>
+
+                <div class="auth-panels-container">
+                    <div class="auth-panel active">
+
+                        {# Mensajes Django — diseño unificado (Consigna 2) #}
+                        {% include 'includes/mensajes.html' %}
+
+                        {# Errores de validación (contraseñas no coinciden, muy cortas, etc.) #}
+                        {% if form.non_field_errors %}
+                            <div class="nt-alert nt-alert--error">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                <span>{{ form.non_field_errors.0 }}</span>
+                            </div>
+                        {% endif %}
+
+                        <form method="POST" novalidate>
+                            {% csrf_token %}
+
+                            <div class="nt-field">
+                                <label class="nt-label" for="{{ form.password1.id_for_label }}">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                    Nueva contraseña
+                                    <span class="required">*</span>
+                                </label>
+                                <div class="nt-input-wrap">
+                                    {{ form.password1 }}
+                                </div>
+                            </div>
+
+                            <div class="nt-field">
+                                <label class="nt-label" for="{{ form.password2.id_for_label }}">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                                    Confirmar nueva contraseña
+                                    <span class="required">*</span>
+                                </label>
+                                <div class="nt-input-wrap">
+                                    {{ form.password2 }}
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-full nt-submit-btn">
+                                <span class="btn-text">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                    Guardar nueva contraseña
+                                </span>
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
+
+                <span class="card-corner card-corner--tl"></span>
+                <span class="card-corner card-corner--tr"></span>
+                <span class="card-corner card-corner--bl"></span>
+                <span class="card-corner card-corner--br"></span>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

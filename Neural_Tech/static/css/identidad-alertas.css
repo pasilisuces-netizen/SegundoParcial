@@ -1,0 +1,63 @@
+/* ============================================================
+   IDENTIDAD VISUAL — ALERTAS UNIFICADAS (Consigna 2, Examen Final)
+   ------------------------------------------------------------
+   Este archivo centraliza el estilo de TODAS las alertas del sitio:
+   validación de formularios, envío de formularios, registro,
+   login, y eliminación/edición de consultas en el Panel de Admin.
+
+   Se agrega como archivo aparte para no tener que tocar el
+   globalStyles.css (que ya es muy largo). Se linkea en base.html
+   DESPUÉS de globalStyles.css para que sus reglas tengan prioridad.
+   ============================================================ */
+
+/* ============================================================
+   AUTENTICACIÓN — Nombre de usuario en el header (Consigna 3)
+   ============================================================ */
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-title);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    opacity: 0.9;
+    white-space: nowrap;
+}
+.nav-user svg { flex-shrink: 0; }
+
+/* Contenedor de mensajes (usado por includes/mensajes.html) */
+.nt-messages {
+    margin-bottom: 1.2rem;
+}
+
+/* Variante que faltaba en el set original de nt-alert */
+.nt-alert--warning {
+    background: rgba(255, 193, 7, 0.08);
+    border: 1px solid rgba(255, 193, 7, 0.35);
+    color: #ffc107;
+}
+
+/* ------------------------------------------------------------
+   Compatibilidad: si en algún template quedó una clase vieja
+   (.alert, .dash-alert) la hacemos ver IGUAL que nt-alert para
+   que no haya inconsistencia visual mientras se termina de
+   migrar todo a includes/mensajes.html
+   ------------------------------------------------------------ */
+.alert,
+.dash-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    margin-bottom: 1.2rem;
+    line-height: 1.5;
+    border: 1px solid;
+}
+.alert-success,
+.dash-alert-success { background: rgba(82, 214, 129, 0.08); border-color: rgba(82, 214, 129, 0.3); color: #52d681; }
+.alert-error        { background: rgba(255, 77, 77, 0.08);  border-color: rgba(255, 77, 77, 0.3);  color: #ff6b6b; }
+.alert-warning      { background: rgba(255, 193, 7, 0.08);  border-color: rgba(255, 193, 7, 0.35);  color: #ffc107; }
+.alert-info         { background: rgba(0, 173, 181, 0.08);  border-color: var(--border);            color: var(--accent); }

@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}CMS · Gestor de Contenidos | NeuralTech{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'mi_app/styles.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="page-hero">
+    <div class="page-hero-bg">
+        <div class="hero-grid"></div>
+    </div>
+    <div class="container">
+        <div class="page-hero-content">
+            <div class="hero-badge">
+                <span class="badge-dot"></span>
+                <span>Usuario autenticado · Sistema activo</span>
+            </div>
+            <h1 class="page-hero-title">
+                Panel de <span class="accent">Administración</span>
+            </h1>
+            <p>Gestión de contenidos publicados en el sitio web.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+
+        <!-- ENCABEZADO -->
+        <div class="dash-header">
+            <div>
+                <h2 class="dash-title">
+                    CMS · Gestor de <span class="accent">Contenidos</span>
+                </h2>
+                <p class="dash-subtitle">Editá el contenido de la página de Inicio sin tocar el código fuente.</p>
+            </div>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="dash-logout-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
+
+        <!-- TABS DEL PANEL DE ADMINISTRACIÓN -->
+        <div class="dash-tabs">
+            <a href="{% url 'dashboard' %}" class="dash-tab">
+                📋 Gestor de Consultas
+            </a>
+            <a href="{% url 'cms_contenido' %}" class="dash-tab dash-tab-active">
+                🖊️ Gestor de Contenidos (CMS)
+            </a>
+        </div>
+
+        <!-- MENSAJES DEL SISTEMA -->
+        {% include 'includes/mensajes.html' %}
+
+        <!-- FORMULARIO CMS -->
+        <div class="cms-grid">
+
+            <div class="form-card cms-form-card">
+                <div class="form-card-header">
+                    <span class="form-tag">Página: Inicio</span>
+                    <div class="form-status">
+                        <span class="badge-dot"></span>
+                        Últ. actualización: {{ contenido.actualizado_en|date:"d/m/Y H:i" }}
+                    </div>
+                </div>
+
+                <form method="POST" action="{% url 'cms_contenido' %}" class="contact-form" novalidate>
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        {{ form.titulo.label_tag }}
+                        {{ form.titulo }}
+                        {% if form.titulo.errors %}
+                            <span class="form-error">{{ form.titulo.errors|join:" " }}</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form.contenido.label_tag }}
+                        {{ form.contenido }}
+                        {% if form.contenido.errors %}
+                            <span class="form-error">{{ form.contenido.errors|join:" " }}</span>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    <a href="{% url 'inicio' %}" target="_blank" class="btn btn-ghost">
+                        Ver sitio publicado
+                    </a>
+                </form>
+            </div>
+
+            <!-- VISTA PREVIA -->
+            <div class="cms-preview-card">
+                <span class="cms-preview-label">Vista previa · Página de Inicio</span>
+                <div class="cms-preview-box">
+                    <h3 class="cms-preview-title">{{ contenido.titulo }}</h3>
+                    <p class="cms-preview-text">{{ contenido.contenido|linebreaksbr }}</p>
+                </div>
+                <p class="cms-preview-hint">
+                    Así se ve actualmente el título y la sección principal del hero
+                    de la página de Inicio. Guardá los cambios para publicarlos.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
