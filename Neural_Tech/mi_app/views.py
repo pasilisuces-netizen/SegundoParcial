@@ -20,15 +20,16 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 
-from .forms import ContactoForm, RegistroForm, SolicitarResetForm, NuevaContrasenaForm
-from .models import Consultas, UsuarioPermitido, clasificar_mensaje
+from .forms import ContactoForm, RegistroForm, SolicitarResetForm, NuevaContrasenaForm, ContenidoForm
+from .models import Consultas, UsuarioPermitido, ContenidoSitio, clasificar_mensaje
 from .serializers import ConsultaSerializer
 
 
 # ─── PÁGINAS PRINCIPALES ────────────────────────────────────────────────────
 
 def pagina_inicio(request):
-    return render(request, 'mi_app/index.html')
+    contenido = ContenidoSitio.get_o_crear_inicio()
+    return render(request, 'mi_app/index.html', {'contenido': contenido})
 
 
 def servicios(request):
@@ -443,6 +444,38 @@ def editar_consulta(request, pk):
         })
     return render(request, 'mi_app/editar_consulta.html',
                   {'form': form, 'consulta': consulta})
+
+
+# ─── CMS (Content Management System) — Consigna 4 ───────────────────────────
+
+@login_required
+def cms_contenido(request):
+    """
+    Panel de administración · Gestor de Contenidos (CMS).
+
+    Permite al cliente modificar, sin tocar el código fuente, el título
+    y la sección principal (bajada/descripción) de la página de Inicio.
+    Al guardar los cambios, la web pública (pagina_inicio) los refleja
+    inmediatamente, ya que ambas vistas leen el mismo registro en la
+    base de datos (ContenidoSitio).
+    """
+    contenido = ContenidoSitio.get_o_crear_inicio()
+
+    if request.method == 'POST':
+        form = ContenidoForm(request.POST, instance=contenido)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'El contenido de la página de Inicio fue actualizado correctamente.')
+            return redirect('cms_contenido')
+        else:
+            messages.error(request, 'Revisá los campos marcados.')
+    else:
+        form = ContenidoForm(instance=contenido)
+
+    return render(request, 'mi_app/cms.html', {
+        'form': form,
+        'contenido': contenido,
+    })
 
 
 # ─── API PROPIA — CONSIGNA 6 (Django REST Framework) ────────────────────────

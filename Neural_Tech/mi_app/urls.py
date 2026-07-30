@@ -1,5 +1,3 @@
-
-
 from django.urls import path
 from . import views
 
@@ -27,6 +25,9 @@ urlpatterns = [
     path('dashboard/',                           views.dashboard,         name='dashboard'),
     path('dashboard/eliminar/<int:pk>/',         views.eliminar_consulta, name='eliminar_consulta'),
     path('dashboard/editar/<int:pk>/',           views.editar_consulta,   name='editar_consulta'),
+
+    # CMS (Content Management System) — Consigna 4
+    path('dashboard/cms/', views.cms_contenido, name='cms_contenido'),
 
     # API propia — Consigna 6
     path('api/consultas/', views.api_consultas, name='api_consultas'),

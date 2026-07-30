@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 import re
 
+from .models import ContenidoSitio
+
 
 class ContactoForm(forms.Form):
 
@@ -147,3 +149,45 @@ class NuevaContrasenaForm(forms.Form):
             raise ValidationError('Las contraseñas no coinciden.')
 
         return cleaned_data
+
+
+# ─── CMS (Content Management System) — Consigna 4 ───────────────────────────
+
+class ContenidoForm(forms.ModelForm):
+    """
+    Formulario que usa el cliente, desde el Panel de Administración,
+    para editar el título y la sección principal de la página de Inicio
+    sin tocar el código fuente.
+    """
+    class Meta:
+        model = ContenidoSitio
+        fields = ['titulo', 'contenido']
+        widgets = {
+            'titulo': forms.TextInput(attrs={
+                'class': 'form-input',
+                'id': 'titulo',
+                'placeholder': 'Título principal de la página',
+            }),
+            'contenido': forms.Textarea(attrs={
+                'class': 'form-input',
+                'id': 'contenido',
+                'rows': 6,
+                'placeholder': 'Texto de la sección principal (bajada/descripción)',
+            }),
+        }
+        labels = {
+            'titulo': 'Título',
+            'contenido': 'Contenido',
+        }
+
+    def clean_titulo(self):
+        titulo = self.cleaned_data['titulo'].strip()
+        if len(titulo) < 5:
+            raise ValidationError('El título debe tener al menos 5 caracteres.')
+        return titulo
+
+    def clean_contenido(self):
+        contenido = self.cleaned_data['contenido'].strip()
+        if len(contenido) < 10:
+            raise ValidationError('El contenido debe tener al menos 10 caracteres.')
+        return contenido
