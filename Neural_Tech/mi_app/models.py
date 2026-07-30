@@ -58,6 +58,10 @@ class UsuarioPermitido(models.Model):
     nombre = models.CharField(max_length=200)
     email = models.EmailField(unique=True)
     codigo_validacion = models.CharField(max_length=100)
+    autorizado_admin = models.BooleanField(
+        default=False,
+        help_text="Tildar para que este usuario obtenga permisos de administrador al validar su cuenta."
+    )
 
     class Meta:
         db_table = 'usuarios_permitidos'
