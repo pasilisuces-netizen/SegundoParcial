@@ -6,7 +6,7 @@ services:
        pip install -r requirements.txt &&
       python manage.py migrate &&
       python manage.py collectstatic --noinput
-    startCommand: "gunicorn Neural_Tech.wsgi:application"
+    startCommand: "gunicorn mi_sitio.wsgi:application --timeout 60"
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: Neural_Tech.settings
