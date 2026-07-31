@@ -342,8 +342,9 @@ def olvide_contrasena(request):
                     send_mail(
                         'Restablecer tu contraseña — NeuralTech',
                         cuerpo,
-                        settings.DEFAULT_FROM_EMAIL,
-                        [user.email],
+                        message="Si recibís este correo, el envío desde la función olvide_contrasena funciona.",
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[settings.DEFAULT_FROM_EMAIL],
                         fail_silently=False,
                     )
                 except Exception as e:
