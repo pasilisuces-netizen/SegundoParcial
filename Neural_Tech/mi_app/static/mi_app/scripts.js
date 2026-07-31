@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
 
     // ---- CURSOR GLOW ( // efecto visual que hace que un glow siga al cursor) ----
@@ -173,12 +172,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
         }
 
-    // NOTA: el envío del formulario (submit) se maneja una única vez,
-    // más abajo, en el bloque "contacto_ajax.js" de este mismo archivo.
-    // Antes había un segundo listener de 'submit' acá mismo que disparaba
-    // un fetch/POST adicional cada vez que se enviaba el formulario,
-    // provocando que cada consulta quedara guardada duplicada en la
-    // base de datos. Se elimina ese listener redundante.
+  // NOTA: el listener 'submit' que iba acá se eliminó porque duplicaba
+  // el envío del formulario de contacto. Este archivo ya tiene, más abajo
+  // (sección "contacto_ajax.js"), OTRO listener 'submit' sobre el mismo
+  // #contactForm. Al tener dos listeners, cada click en "Enviar" disparaba
+  // dos peticiones POST: la consulta se guardaba dos veces en la base de
+  // datos, se enviaban dos mails y se mostraban dos mensajes de éxito
+  // superpuestos. La validación de campos (validateField/validateCheckbox)
+  // de acá arriba se deja intacta porque solo se usa para el resaltado en
+  // vivo de los inputs (blur/input) y no interfiere con el envío.
 
     // ---- GLITCH EFFECT en el subtitulo----
     const heroTitle = document.querySelector('.hero-title');
