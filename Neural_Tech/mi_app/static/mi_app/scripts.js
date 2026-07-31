@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // ---- CURSOR GLOW ( // efecto visual que hace que un glow siga al cursor) ----
@@ -172,103 +173,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
         }
 
-  contactForm.addEventListener('submit', async (e) => {
-
-    e.preventDefault();
-
-    let valid = true;
-
-    contactForm.querySelectorAll('.form-input').forEach(input => {
-        if (!validateField(input)) {
-            valid = false;
-        }
-    });
-
-    if (!validateCheckbox()) {
-        valid = false;
-    }
-
-    if (!valid) return;
-
-    const btn = document.getElementById("submitBtn");
-    btn.disabled = true;
-
-    const formData = new FormData(contactForm);
-
-    try {
-
-        console.log("Enviando formulario...");
-
-        const response = await fetch(
-            contactForm.action,
-            {
-                method: "POST",
-                body: formData,
-                headers: {
-                    "X-Requested-With":"XMLHttpRequest"
-                }
-            }
-        );
-
-        console.log("Status:",response.status);
-
-        const text = await response.text();
-
-        console.log("Respuesta cruda:");
-        console.log(text);
-
-        const data = JSON.parse(text);
-
-        let old=document.querySelector(".success-message");
-
-        if(old){
-            old.remove();
-        }
-
-        const div=document.createElement("div");
-
-        div.className="success-message";
-
-        if(data.success){
-
-            div.innerHTML=`
-            <div class="success-icon">✓</div>
-
-            <div class="success-content">
-                <h4>Mensaje enviado</h4>
-                <p>${data.message}</p>
-            </div>
-            `;
-
-            contactForm.reset();
-
-        }else{
-
-            div.innerHTML=`
-            <div class="error-content">
-                <h4>Error</h4>
-                <p>${data.message}</p>
-            </div>
-            `;
-        }
-
-        contactForm.parentNode.insertBefore(
-            div,
-            contactForm
-        );
-
-    }
-
-    catch(error){
-
-        console.log("ERROR:");
-        console.log(error);
-
-    }
-
-    btn.disabled=false;
-
-});
+    // NOTA: el envío del formulario (submit) se maneja una única vez,
+    // más abajo, en el bloque "contacto_ajax.js" de este mismo archivo.
+    // Antes había un segundo listener de 'submit' acá mismo que disparaba
+    // un fetch/POST adicional cada vez que se enviaba el formulario,
+    // provocando que cada consulta quedara guardada duplicada en la
+    // base de datos. Se elimina ese listener redundante.
 
     // ---- GLITCH EFFECT en el subtitulo----
     const heroTitle = document.querySelector('.hero-title');
@@ -831,6 +741,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return 'Ingresá un email válido.';
                 return '';
             });
+            validateInput('id_username',    'err-reg-username', v => !v.trim() ? 'Ingresá un nombre de usuario.' : '');
             validateInput('id_password1',   'err-password1',    v => {
                 if (!v)         return 'Ingresá una contraseña.';
                 if (v.length < 8) return 'La contraseña debe tener al menos 8 caracteres.';

@@ -124,29 +124,9 @@
             </p>
         </div>
 
-        {% if noticias_ia %}
-        <div class="tech-categories">
-            {% for noticia in noticias_ia %}
-            <div class="tech-category" data-aos="fade-up">
-                <h3 class="tech-cat-title" style="font-size: 1rem;">
-                    <a href="{{ noticia.url }}" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
-                        {{ noticia.titulo }}
-                    </a>
-                </h3>
-                <div class="tech-pills">
-                    <span class="tech-pill">⭐ {{ noticia.puntos }} puntos</span>
-                    {% if noticia.autor %}
-                        <span class="tech-pill">{{ noticia.autor }}</span>
-                    {% endif %}
-                </div>
-            </div>
-            {% endfor %}
+        <div id="noticiasIaContainer" class="tech-categories">
+            <p class="section-desc">Cargando noticias…</p>
         </div>
-        {% else %}
-        <div class="dash-empty">
-            <p>No se pudieron cargar las noticias en este momento. Probá de nuevo más tarde.</p>
-        </div>
-        {% endif %}
     </div>
 </section>
 
@@ -273,4 +253,50 @@
     </div>
 </section>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var contenedor = document.getElementById('noticiasIaContainer');
+    if (!contenedor) return;
+
+    // Consumo de la API externa a través del endpoint propio de
+    // Django REST Framework (api_noticias_ia) — Consigna 6.
+    fetch("{% url 'api_noticias_ia' %}")
+        .then(function (response) { return response.json(); })
+        .then(function (noticias) {
+            if (!Array.isArray(noticias) || noticias.length === 0) {
+                contenedor.innerHTML = '<div class="dash-empty">' +
+                    '<p>No se pudieron cargar las noticias en este momento. Probá de nuevo más tarde.</p>' +
+                    '</div>';
+                return;
+            }
+
+            contenedor.innerHTML = noticias.map(function (noticia) {
+                var autorHtml = noticia.autor
+                    ? '<span class="tech-pill">' + noticia.autor + '</span>'
+                    : '';
+                return (
+                    '<div class="tech-category" data-aos="fade-up">' +
+                        '<h3 class="tech-cat-title" style="font-size: 1rem;">' +
+                            '<a href="' + noticia.url + '" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">' +
+                                noticia.titulo +
+                            '</a>' +
+                        '</h3>' +
+                        '<div class="tech-pills">' +
+                            '<span class="tech-pill">⭐ ' + noticia.puntos + ' puntos</span>' +
+                            autorHtml +
+                        '</div>' +
+                    '</div>'
+                );
+            }).join('');
+        })
+        .catch(function () {
+            contenedor.innerHTML = '<div class="dash-empty">' +
+                '<p>No se pudieron cargar las noticias en este momento. Probá de nuevo más tarde.</p>' +
+                '</div>';
+        });
+});
+</script>
 {% endblock %}

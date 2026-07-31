@@ -31,4 +31,5 @@ urlpatterns = [
 
     # API propia — Consigna 6
     path('api/consultas/', views.api_consultas, name='api_consultas'),
+    path('api/noticias-ia/', views.api_noticias_ia, name='api_noticias_ia'),
 ]

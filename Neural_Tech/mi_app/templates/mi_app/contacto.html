@@ -225,7 +225,8 @@
 {% endblock %}
 
 
-{% block extra_js %}
-{# Script de integración dinámica Fetch API — Unidad 3, Punto 2 #}
-<script src="{% static 'mi_app/scripts.js' %}"></script>
-{% endblock %}
+{# La lógica de envío del formulario (Fetch API) ya está incluida en
+   static/js/scripts.js, que carga base.html una única vez. Cargar acá
+   además mi_app/scripts.js duplicaba el listener de "submit" del
+   formulario y hacía que cada consulta se guardara dos veces en la
+   base de datos. #}

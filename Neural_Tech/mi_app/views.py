@@ -33,7 +33,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 
-from .forms import ContactoForm, RegistroForm, SolicitarResetForm, NuevaContrasenaForm, ContenidoForm, ProbarEmailForm
+from .forms import ContactoForm, RegistroForm, SolicitarResetForm, NuevaContrasenaForm, ContenidoForm
 from .models import Consultas, UsuarioPermitido, ContenidoSitio, clasificar_mensaje
 from .serializers import ConsultaSerializer
 
@@ -91,40 +91,15 @@ def servicios(request):
 
 def tecnologia(request):
     """
-    Consumo de API externa — Consigna 6.
-    Se utiliza la API pública de Hacker News (Algolia Search API),
-    gratuita y sin necesidad de API key, para mostrar las últimas
-    noticias relacionadas con Inteligencia Artificial.
-    Documentación: https://hn.algolia.com/api
-    """
-    noticias_ia = []
-    try:
-        respuesta = requests.get(
-            'https://hn.algolia.com/api/v1/search_by_date',
-            params={
-                'query': 'artificial intelligence',
-                'tags': 'story',
-                'hitsPerPage': 6,
-            },
-            timeout=5,
-        )
-        if respuesta.status_code == 200:
-            datos = respuesta.json()
-            for hit in datos.get('hits', []):
-                if hit.get('title'):
-                    noticias_ia.append({
-                        'titulo': hit.get('title'),
-                        'url': hit.get('url') or f"https://news.ycombinator.com/item?id={hit.get('objectID')}",
-                        'puntos': hit.get('points', 0),
-                        'autor': hit.get('author', ''),
-                        'fecha': hit.get('created_at', ''),
-                    })
-    except requests.exceptions.RequestException:
-        # Si la API externa no responde, la página sigue funcionando
-        # simplemente sin la sección de noticias.
-        noticias_ia = []
+    Página de Tecnología — Consigna 6.
 
-    return render(request, 'mi_app/tecnologia.html', {'noticias_ia': noticias_ia})
+    El consumo de la API externa (Hacker News / Algolia) ya NO se hace
+    acá con un render tradicional: se hace a través del endpoint propio
+    'api_noticias_ia', construido con Django REST Framework (ver más
+    abajo). El frontend de esta página consulta ese endpoint por medio
+    de Fetch API (JavaScript) y arma las tarjetas de noticias en el DOM.
+    """
+    return render(request, 'mi_app/tecnologia.html')
 
 
 # ─── CONTACTO ────────────────────────────────────────────────────────────────
@@ -446,31 +421,10 @@ def dashboard(request):
         .order_by('categoria')
     )
 
-    # ─ Prueba de envío de mail (para descartar problemas de SMTP) ─
-    probar_email_form = ProbarEmailForm()
-    if request.method == 'POST' and 'email_destino' in request.POST:
-        probar_email_form = ProbarEmailForm(request.POST)
-        if probar_email_form.is_valid():
-            destino = probar_email_form.cleaned_data['email_destino']
-            enviar_mail_seguro(
-                'Mail de prueba — NeuralTech',
-                'mi_app/emails/mail_prueba.html',
-                {},
-                [destino],
-            )
-            messages.success(
-                request,
-                f'Se disparó el envío del mail de prueba a {destino}. '
-                f'Revisá tu bandeja (o Mailtrap) en unos segundos; si falla, '
-                f'quedará registrado en los logs del servidor.'
-            )
-            return redirect('dashboard')
-
     return render(request, 'mi_app/dashboard.html', {
         'consultas':          consultas,
         'total':              total,
         'por_categoria':      por_categoria,
-        'probar_email_form':  probar_email_form,
     })
 
 
@@ -556,3 +510,51 @@ def api_consultas(request):
     consultas = Consultas.objects.all()
     serializer = ConsultaSerializer(consultas, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def api_noticias_ia(request):
+    """
+    Consumo de API externa — Consigna 6.
+
+    Se utiliza la API pública de Hacker News (Algolia Search API),
+    gratuita y sin necesidad de API key, para obtener las últimas
+    noticias relacionadas con Inteligencia Artificial.
+    Documentación: https://hn.algolia.com/api
+
+    A diferencia de la implementación anterior, este consumo de la API
+    externa (mediante la librería requests) se realiza íntegramente
+    dentro de un endpoint de Django REST Framework, y no desde una
+    vista tradicional con render(). La página 'tecnologia.html' obtiene
+    estos datos consultando este endpoint vía JavaScript (Fetch API).
+    """
+    noticias_ia = []
+    try:
+        respuesta = requests.get(
+            'https://hn.algolia.com/api/v1/search_by_date',
+            params={
+                'query': 'artificial intelligence',
+                'tags': 'story',
+                'hitsPerPage': 6,
+            },
+            timeout=5,
+        )
+        respuesta.raise_for_status()
+        datos = respuesta.json()
+        for hit in datos.get('hits', []):
+            if hit.get('title'):
+                noticias_ia.append({
+                    'titulo': hit.get('title'),
+                    'url': hit.get('url') or f"https://news.ycombinator.com/item?id={hit.get('objectID')}",
+                    'puntos': hit.get('points', 0),
+                    'autor': hit.get('author', ''),
+                    'fecha': hit.get('created_at', ''),
+                })
+    except requests.exceptions.RequestException:
+        return Response(
+            {'detail': 'No se pudo conectar con la API externa de noticias.'},
+            status=status.HTTP_503_SERVICE_UNAVAILABLE,
+        )
+
+    return Response(noticias_ia, status=status.HTTP_200_OK)
