@@ -343,8 +343,8 @@ def olvide_contrasena(request):
                         [user.email],
                         fail_silently=True,
                     )
-                except Exception:
-                    pass
+                except Exception as e:
+                      print(f"[ERROR ENVIO MAIL] {type(e).__name__}: {e}")
 
                 messages.success(
                     request,
@@ -402,7 +402,7 @@ def restablecer_contrasena(request, uidb64, token):
     })
 
 
-# ─── DASHBOARD — CONSIGNA 3 ──────────────────────────────────────────────────
+# ─── DASHBOARD — ──────────────────────────────────────────────────
 
 @solo_admin
 def dashboard(request):
@@ -460,7 +460,7 @@ def editar_consulta(request, pk):
                   {'form': form, 'consulta': consulta})
 
 
-# ─── CMS (Content Management System) — Consigna 4 ───────────────────────────
+# ─── CMS (Content Management System)  ───────────────────────────
 
 @solo_admin
 def cms_contenido(request):
