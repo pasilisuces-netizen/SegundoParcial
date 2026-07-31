@@ -12,6 +12,7 @@ from django.db.models import Count
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
+import threading
 
 import requests
 import secrets
@@ -34,6 +35,30 @@ from rest_framework import status
 from .forms import ContactoForm, RegistroForm, SolicitarResetForm, NuevaContrasenaForm, ContenidoForm, ProbarEmailForm
 from .models import Consultas, UsuarioPermitido, ContenidoSitio, clasificar_mensaje
 from .serializers import ConsultaSerializer
+
+
+# ─── ENVÍO DE MAIL SEGURO ────────────────────────────────────────────────────
+
+def enviar_mail_seguro(asunto, cuerpo, destinatarios, timeout_segundos=8):
+    """
+
+    """
+    def _enviar():
+        try:
+            send_mail(
+                asunto,
+                cuerpo,
+                settings.DEFAULT_FROM_EMAIL,
+                destinatarios,
+                fail_silently=False,
+            )
+            logger.info(f"[MAIL OK] Enviado a {destinatarios}")
+        except Exception as e:
+            logger.error(f"[ERROR ENVIO MAIL] destinatarios={destinatarios} {type(e).__name__}: {e}")
+
+    hilo = threading.Thread(target=_enviar, daemon=True)
+    hilo.start()
+    hilo.join(timeout=timeout_segundos)
 
 
 # ─── PÁGINAS PRINCIPALES ────────────────────────────────────────────────────
@@ -125,11 +150,7 @@ def contacto(request):
                 f"Categoría: {categoria}\n\n"
                 f"Mensaje:\n{mensaje}"
             )
-            try:
-                send_mail(asunto, cuerpo, settings.DEFAULT_FROM_EMAIL,
-                          [settings.DEFAULT_FROM_EMAIL], fail_silently=False)
-            except Exception:
-                pass
+            enviar_mail_seguro(asunto, cuerpo, [settings.DEFAULT_FROM_EMAIL])
 
             if is_ajax:
                 return JsonResponse({
@@ -199,20 +220,15 @@ def registro(request):
             request.session['validacion_codigo']  = codigo_generado
 
             # Enviar mail con el código
-            try:
-                send_mail(
-                    'Validación de cuenta — Neural Tech',
-                    (
-                        f'Hola {nombre},\n\n'
-                        f'Tu código de validación es: {codigo_generado}\n\n'
-                        f'Ingresá en el sitio y usá ese código para activar tu cuenta.'
-                    ),
-                    settings.DEFAULT_FROM_EMAIL,
-                    [email],
-                    fail_silently=False,
-                )
-            except Exception as e:
-                logger.error(f"[ERROR ENVIO MAIL - registro] {type(e).__name__}: {e}")
+            enviar_mail_seguro(
+                'Validación de cuenta — Neural Tech',
+                (
+                    f'Hola {nombre},\n\n'
+                    f'Tu código de validación es: {codigo_generado}\n\n'
+                    f'Ingresá en el sitio y usá ese código para activar tu cuenta.'
+                ),
+                [email],
+            )
 
             messages.success(request, 'Le llegará un correo para validar su cuenta.')
             return redirect('validar_cuenta')
@@ -338,17 +354,13 @@ def olvide_contrasena(request):
                     f'— El equipo de NeuralTech'
                 )
 
-                try:
-                    send_mail(
-                        'Restablecer tu contraseña — NeuralTech',
-                        cuerpo,
-                        message="Si recibís este correo, el envío desde la función olvide_contrasena funciona.",
-                        from_email=settings.DEFAULT_FROM_EMAIL,
-                        recipient_list=[settings.DEFAULT_FROM_EMAIL],
-                        fail_silently=False,
-                    )
-                except Exception as e:
-                    logger.error(f"[ERROR ENVIO MAIL - olvide_contrasena] {type(e).__name__}: {e}")
+                # Se envía al mail del usuario que pidió el reset (antes,
+                # por error, se enviaba a la propia casilla remitente).
+                enviar_mail_seguro(
+                    'Restablecer tu contraseña — NeuralTech',
+                    cuerpo,
+                    [user.email],
+                )
 
                 messages.success(
                     request,
@@ -425,29 +437,22 @@ def dashboard(request):
         probar_email_form = ProbarEmailForm(request.POST)
         if probar_email_form.is_valid():
             destino = probar_email_form.cleaned_data['email_destino']
-            try:
-                send_mail(
-                    'Mail de prueba — NeuralTech',
-                    (
-                        'Este es un mail de prueba enviado desde el panel de '
-                        'administración de NeuralTech.\n\n'
-                        'Si lo recibiste, el envío de correo (SMTP) está '
-                        'funcionando correctamente.'
-                    ),
-                    settings.DEFAULT_FROM_EMAIL,
-                    [destino],
-                    fail_silently=False,
-                )
-                messages.success(
-                    request,
-                    f'Mail de prueba enviado correctamente a {destino}.'
-                )
-            except Exception as e:
-                logger.error(f"[ERROR ENVIO MAIL - prueba dashboard] {type(e).__name__}: {e}")
-                messages.error(
-                    request,
-                    f'Falló el envío del mail de prueba: {type(e).__name__}: {e}'
-                )
+            enviar_mail_seguro(
+                'Mail de prueba — NeuralTech',
+                (
+                    'Este es un mail de prueba enviado desde el panel de '
+                    'administración de NeuralTech.\n\n'
+                    'Si lo recibiste, el envío de correo (SMTP) está '
+                    'funcionando correctamente.'
+                ),
+                [destino],
+            )
+            messages.success(
+                request,
+                f'Se disparó el envío del mail de prueba a {destino}. '
+                f'Revisá tu bandeja (o Mailtrap) en unos segundos; si falla, '
+                f'quedará registrado en los logs del servidor.'
+            )
             return redirect('dashboard')
 
     return render(request, 'mi_app/dashboard.html', {
