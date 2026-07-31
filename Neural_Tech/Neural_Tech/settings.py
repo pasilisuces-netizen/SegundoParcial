@@ -134,24 +134,24 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = 'c2280296.ferozo.com'
-EMAIL_PORT = 587
-EMAIL_USE_SSL = False
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "apasilis@proyectoweb.website"
-EMAIL_HOST_PASSWORD = "Armando2026/"
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-EMAIL_TIMEOUT = 10
-
 # EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+# EMAIL_HOST = 'c2280296.ferozo.com'
 # EMAIL_PORT = 587
+# EMAIL_USE_SSL = False
 # EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = "28d94b67d3f167"
-# EMAIL_HOST_PASSWORD = "9298cb6569b7c9"
+# EMAIL_HOST_USER = "apasilis@proyectoweb.website"
+# EMAIL_HOST_PASSWORD = "Armando2026/"
 # DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # EMAIL_TIMEOUT = 10
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "28d94b67d3f167"
+EMAIL_HOST_PASSWORD = "9298cb6569b7c9"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_TIMEOUT = 10
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
