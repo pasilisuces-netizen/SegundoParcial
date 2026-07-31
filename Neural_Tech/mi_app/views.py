@@ -9,8 +9,9 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.http import JsonResponse
 from django.db.models import Count
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from django.urls import reverse
 import threading
 
@@ -37,21 +38,37 @@ from .models import Consultas, UsuarioPermitido, ContenidoSitio, clasificar_mens
 from .serializers import ConsultaSerializer
 
 
-# ─── ENVÍO DE MAIL SEGURO ────────────────────────────────────────────────────
+# ─── ENVÍO DE MAIL SEGURO (HTML con identidad visual — Consigna 4, punto 2) ──
 
-def enviar_mail_seguro(asunto, cuerpo, destinatarios, timeout_segundos=8):
+def enviar_mail_seguro(asunto, template_name, contexto, destinatarios, timeout_segundos=8):
     """
+    Envía un mail en formato HTML (con el diseño y logo de NeuralTech)
+    sin bloquear la respuesta al usuario.
 
+    - template_name: ruta del template dentro de mi_app/templates/,
+      por ejemplo 'mi_app/emails/nueva_consulta.html'.
+    - contexto: diccionario con las variables que usa ese template.
+
+    Se arma también una versión en texto plano automáticamente (a partir
+    del HTML) para los clientes de correo que no soportan HTML.
+
+    El envío corre en un hilo aparte con timeout propio: si el servidor
+    SMTP no responde a tiempo, el error queda registrado en el log pero
+    la vista que llamó a esta función sigue su curso con normalidad.
     """
+    html_content = render_to_string(template_name, contexto)
+    text_content = strip_tags(html_content)
+
     def _enviar():
         try:
-            send_mail(
+            mail = EmailMultiAlternatives(
                 asunto,
-                cuerpo,
+                text_content,
                 settings.DEFAULT_FROM_EMAIL,
                 destinatarios,
-                fail_silently=False,
             )
+            mail.attach_alternative(html_content, "text/html")
+            mail.send(fail_silently=False)
             logger.info(f"[MAIL OK] Enviado a {destinatarios}")
         except Exception as e:
             logger.error(f"[ERROR ENVIO MAIL] destinatarios={destinatarios} {type(e).__name__}: {e}")
@@ -139,18 +156,22 @@ def contacto(request):
                 categoria=categoria,
             )
 
-            # Enviar email de confirmación
+            # Enviar email de confirmación (HTML con identidad de marca)
             asunto = f"[{categoria}] Nueva consulta desde NeuralTech — {nombre} {apellido}"
-            cuerpo = (
-                f"Nueva consulta recibida:\n\n"
-                f"Nombre:    {nombre} {apellido}\n"
-                f"Email:     {email}\n"
-                f"Empresa:   {empresa if empresa else 'No indicada'}\n"
-                f"Servicio:  {servicio}\n"
-                f"Categoría: {categoria}\n\n"
-                f"Mensaje:\n{mensaje}"
+            enviar_mail_seguro(
+                asunto,
+                'mi_app/emails/nueva_consulta.html',
+                {
+                    'nombre': nombre,
+                    'apellido': apellido,
+                    'email': email,
+                    'empresa': empresa,
+                    'servicio': servicio,
+                    'categoria': categoria,
+                    'mensaje': mensaje,
+                },
+                [settings.DEFAULT_FROM_EMAIL],
             )
-            enviar_mail_seguro(asunto, cuerpo, [settings.DEFAULT_FROM_EMAIL])
 
             if is_ajax:
                 return JsonResponse({
@@ -219,14 +240,14 @@ def registro(request):
             request.session['validacion_user_id'] = user.id
             request.session['validacion_codigo']  = codigo_generado
 
-            # Enviar mail con el código
+            # Enviar mail con el código (HTML con identidad de marca)
             enviar_mail_seguro(
                 'Validación de cuenta — Neural Tech',
-                (
-                    f'Hola {nombre},\n\n'
-                    f'Tu código de validación es: {codigo_generado}\n\n'
-                    f'Ingresá en el sitio y usá ese código para activar tu cuenta.'
-                ),
+                'mi_app/emails/validacion_cuenta.html',
+                {
+                    'nombre': nombre,
+                    'codigo': codigo_generado,
+                },
                 [email],
             )
 
@@ -344,21 +365,15 @@ def olvide_contrasena(request):
                 )
                 enlace_completo = request.build_absolute_uri(enlace_relativo)
 
-                cuerpo = (
-                    f'Hola {user.first_name or user.username},\n\n'
-                    f'Recibimos una solicitud para restablecer tu contraseña en NeuralTech.\n\n'
-                    f'Para elegir una nueva contraseña, ingresá al siguiente enlace:\n'
-                    f'{enlace_completo}\n\n'
-                    f'Si vos no solicitaste este cambio, podés ignorar este mensaje: '
-                    f'tu contraseña actual seguirá funcionando con normalidad.\n\n'
-                    f'— El equipo de NeuralTech'
-                )
-
-                # Se envía al mail del usuario que pidió el reset (antes,
-                # por error, se enviaba a la propia casilla remitente).
+                # Se envía al mail del usuario que pidió el reset, en
+                # formato HTML con identidad de marca (logo NeuralTech).
                 enviar_mail_seguro(
                     'Restablecer tu contraseña — NeuralTech',
-                    cuerpo,
+                    'mi_app/emails/restablecer_contrasena.html',
+                    {
+                        'nombre': user.first_name or user.username,
+                        'enlace': enlace_completo,
+                    },
                     [user.email],
                 )
 
@@ -439,12 +454,8 @@ def dashboard(request):
             destino = probar_email_form.cleaned_data['email_destino']
             enviar_mail_seguro(
                 'Mail de prueba — NeuralTech',
-                (
-                    'Este es un mail de prueba enviado desde el panel de '
-                    'administración de NeuralTech.\n\n'
-                    'Si lo recibiste, el envío de correo (SMTP) está '
-                    'funcionando correctamente.'
-                ),
+                'mi_app/emails/mail_prueba.html',
+                {},
                 [destino],
             )
             messages.success(
