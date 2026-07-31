@@ -151,6 +151,23 @@ class NuevaContrasenaForm(forms.Form):
         return cleaned_data
 
 
+# ─── PRUEBA DE ENVÍO DE MAIL — Panel de Administración ──────────────────────
+
+class ProbarEmailForm(forms.Form):
+    """
+    Formulario simple usado en el dashboard de admin para probar que el
+    envío de correo (SMTP) esté funcionando, sin depender de la lógica
+    de tokens de registro/reset de contraseña.
+    """
+    email_destino = forms.EmailField(
+        label='Enviar mail de prueba a',
+        widget=forms.EmailInput(attrs={
+            'class': 'form-input',
+            'placeholder': 'destino@ejemplo.com',
+        })
+    )
+
+
 # ─── CMS (Content Management System) — Consigna 4 ───────────────────────────
 
 class ContenidoForm(forms.ModelForm):

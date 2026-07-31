@@ -66,6 +66,27 @@
         <!-- MENSAJES DEL SISTEMA -->
         {% include 'includes/mensajes.html' %}
 
+        <!-- PRUEBA DE ENVÍO DE MAIL -->
+        <div class="dash-table-section">
+            <h3 class="dash-section-label">📧 Probar envío de mail (SMTP)</h3>
+            <p class="dash-subtitle">
+                Envía un mail de prueba real para descartar problemas de configuración SMTP,
+                sin depender de la lógica de registro o recuperación de contraseña.
+            </p>
+            <form method="post" style="display:flex; gap:.75rem; align-items:flex-start; flex-wrap:wrap; margin-top:1rem;">
+                {% csrf_token %}
+                <div>
+                    {{ probar_email_form.email_destino }}
+                    {% if probar_email_form.email_destino.errors %}
+                        <div class="dash-td-mensaje" style="color:#e05252;">
+                            {{ probar_email_form.email_destino.errors|striptags }}
+                        </div>
+                    {% endif %}
+                </div>
+                <button type="submit" class="dash-btn-editar">Enviar mail de prueba</button>
+            </form>
+        </div>
+
         <!-- RESUMEN ESTADÍSTICO -->
         <div class="dash-stats-section">
             <h3 class="dash-section-label">📊 Resumen Estadístico</h3>

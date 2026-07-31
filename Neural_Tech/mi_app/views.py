@@ -15,6 +15,9 @@ from django.urls import reverse
 
 import requests
 import secrets
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Decorador para restringir vistas solo a usuarios administradores
 # (logueado + is_staff=True). Si no cumple, lo manda al login.
@@ -28,7 +31,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 
-from .forms import ContactoForm, RegistroForm, SolicitarResetForm, NuevaContrasenaForm, ContenidoForm
+from .forms import ContactoForm, RegistroForm, SolicitarResetForm, NuevaContrasenaForm, ContenidoForm, ProbarEmailForm
 from .models import Consultas, UsuarioPermitido, ContenidoSitio, clasificar_mensaje
 from .serializers import ConsultaSerializer
 
@@ -206,10 +209,10 @@ def registro(request):
                     ),
                     settings.DEFAULT_FROM_EMAIL,
                     [email],
-                    fail_silently=True,
+                    fail_silently=False,
                 )
-            except Exception:
-                pass
+            except Exception as e:
+                logger.error(f"[ERROR ENVIO MAIL - registro] {type(e).__name__}: {e}")
 
             messages.success(request, 'Le llegará un correo para validar su cuenta.')
             return redirect('validar_cuenta')
@@ -341,10 +344,10 @@ def olvide_contrasena(request):
                         cuerpo,
                         settings.DEFAULT_FROM_EMAIL,
                         [user.email],
-                        fail_silently=True,
+                        fail_silently=False,
                     )
                 except Exception as e:
-                      print(f"[ERROR ENVIO MAIL] {type(e).__name__}: {e}")
+                    logger.error(f"[ERROR ENVIO MAIL - olvide_contrasena] {type(e).__name__}: {e}")
 
                 messages.success(
                     request,
@@ -414,10 +417,43 @@ def dashboard(request):
         .annotate(cantidad=Count('id'))
         .order_by('categoria')
     )
+
+    # ─ Prueba de envío de mail (para descartar problemas de SMTP) ─
+    probar_email_form = ProbarEmailForm()
+    if request.method == 'POST' and 'email_destino' in request.POST:
+        probar_email_form = ProbarEmailForm(request.POST)
+        if probar_email_form.is_valid():
+            destino = probar_email_form.cleaned_data['email_destino']
+            try:
+                send_mail(
+                    'Mail de prueba — NeuralTech',
+                    (
+                        'Este es un mail de prueba enviado desde el panel de '
+                        'administración de NeuralTech.\n\n'
+                        'Si lo recibiste, el envío de correo (SMTP) está '
+                        'funcionando correctamente.'
+                    ),
+                    settings.DEFAULT_FROM_EMAIL,
+                    [destino],
+                    fail_silently=False,
+                )
+                messages.success(
+                    request,
+                    f'Mail de prueba enviado correctamente a {destino}.'
+                )
+            except Exception as e:
+                logger.error(f"[ERROR ENVIO MAIL - prueba dashboard] {type(e).__name__}: {e}")
+                messages.error(
+                    request,
+                    f'Falló el envío del mail de prueba: {type(e).__name__}: {e}'
+                )
+            return redirect('dashboard')
+
     return render(request, 'mi_app/dashboard.html', {
-        'consultas':     consultas,
-        'total':         total,
-        'por_categoria': por_categoria,
+        'consultas':          consultas,
+        'total':              total,
+        'por_categoria':      por_categoria,
+        'probar_email_form':  probar_email_form,
     })
 
 
