@@ -8,6 +8,9 @@ urlpatterns = [
     path('servicios/',  views.servicios,     name='servicios'),
     path('tecnologia/', views.tecnologia,    name='tecnologia'),
     path('contacto/',   views.contacto,      name='contacto'),
+    path('admin/', admin.site.urls),
+    path('',include('mi_app.urls')),
+
 
     # Autenticación
     path('registro/',       views.registro,       name='registro'),

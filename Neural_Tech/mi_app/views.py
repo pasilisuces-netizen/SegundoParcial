@@ -260,7 +260,7 @@ def validar_cuenta(request):
                       backend='django.contrib.auth.backends.ModelBackend')
                 del request.session['validacion_user_id']
                 del request.session['validacion_codigo']
-                return redirect('dashboard')
+                return redirect('dashboard' if user.is_staff else 'inicio')
             except User.DoesNotExist:
                 pass
 
@@ -271,7 +271,7 @@ def validar_cuenta(request):
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('dashboard')
+        return redirect('dashboard' if request.user.is_staff else 'inicio')
 
     if request.method == 'POST':
         username = request.POST.get('username', '')
@@ -292,9 +292,11 @@ def login_view(request):
 
             login(request, user)
 
+            destino = 'dashboard' if user.is_staff else 'inicio'
+
             if is_ajax:
-                return JsonResponse({'success': True, 'redirect_url': '/dashboard/'})
-            return redirect('dashboard')
+                return JsonResponse({'success': True, 'redirect_url': reverse(destino)})
+            return redirect(destino)
 
         mensaje = 'Usuario o contraseña incorrectos.'
         if is_ajax:

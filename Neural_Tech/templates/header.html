@@ -16,16 +16,26 @@
                 <li><a href="{% url 'tecnologia' %}" class="nav-link {% block nav_tecnologia %}{% endblock %}">Tecnología</a></li>
                 <li><a href="{% url 'contacto' %}"   class="nav-link {% block nav_contacto %}{% endblock %}">Contacto</a></li>
                 {% if user.is_authenticated %}
+                {% if user.is_staff %}
                 <li>
                     <a href="{% url 'dashboard' %}" class="nav-link {% block nav_dashboard %}{% endblock %}">
                         Dashboard
                     </a>
                 </li>
+                {% endif %}
                 <li class="nav-user">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                     </svg>
                     <span>{{ user.get_full_name|default:user.username }}</span>
+                </li>
+                <li>
+                    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="nav-link" style="background:none;border:none;cursor:pointer;padding:0;font:inherit;">
+                            Cerrar sesión
+                        </button>
+                    </form>
                 </li>
                 {% else %}
                 <li><a href="{% url 'registro' %}"   class="nav-link {% block nav_registro %}{% endblock %}">Identificate</a></li>
